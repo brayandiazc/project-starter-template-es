@@ -117,7 +117,7 @@ Las contribuciones son lo que hacen a la comunidad de código abierto un lugar i
 5. Abre un Pull Request
 ```
 
-Por favor, lee el [CONTRIBUTING.md](https://gist.github.com/brayandiazc/xxxxxx) para más detalles.
+Por favor, lee el [CONTRIBUTING.md](.github/CONTRIBUTING.md) para más detalles sobre cómo colaborar.
 
 ---
 
@@ -151,7 +151,17 @@ Consulta también la lista de [contribuidores](https://github.com/your/project/c
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia XYZ. Consulta el archivo [LICENSE.md](LICENSE.md) para más información.
+Este proyecto está bajo la Licencia [MIT](LICENSE.md).
+
+---
+
+## ❤️ Apóyanos
+
+Si te gusta este proyecto y deseas apoyar su desarrollo, puedes hacerlo aquí:
+
+- [GitHub Sponsors](https://github.com/sponsors/brayandiazc)
+- [Ko-fi](https://ko-fi.com/brayandiazc)
+- [Patreon](https://patreon.com/brayandiazc)
 
 ---
 
