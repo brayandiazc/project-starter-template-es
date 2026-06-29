@@ -30,6 +30,16 @@ feature concreta.
 Copia [`_template.md`](_template.md), renómbralo en `kebab-case` y documenta el
 nuevo tema. Añádelo a la tabla de arriba.
 
-> **Convenciones adicionales opcionales** (no incluidas por defecto, créalas si tu
-> proyecto las necesita): pagos, webhooks, multi-tenancy, PWA, administración,
-> aceptación legal, observabilidad, etc.
+## Convenciones adicionales opcionales
+
+No se incluyen por defecto; créalas con `_template.md` si tu proyecto las necesita.
+
+- **Genéricas / SaaS**: pagos, webhooks, multi-tenancy, PWA, administración,
+  aceptación legal, observabilidad.
+- **Móvil**: release a stores (versionado, firma/code-signing, capturas y ASO),
+  permisos del dispositivo, notificaciones push, modo offline.
+- **Escritorio**: empaquetado e instaladores por SO, code signing y notarización,
+  auto-update, telemetría / reporte de crashes.
+
+> Ver [`TEMPLATE-USAGE.md`](../../TEMPLATE-USAGE.md) § "Adaptar por tipo de proyecto"
+> para qué borrar y qué reenfocar según sea web, móvil o escritorio.
