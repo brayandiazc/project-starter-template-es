@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentación del Proyecto
+    url: "[URL_REPOSITORIO]/wiki"
+    about: Consulta la documentación completa del proyecto
+  - name: Discusiones de la Comunidad
+    url: "[URL_REPOSITORIO]/discussions"
+    about: Únete a las discusiones para hacer preguntas generales

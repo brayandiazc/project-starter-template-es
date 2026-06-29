@@ -1,0 +1,37 @@
+# ==============================================================================
+# .gitignore — starter genérico multi-stack
+# Borra las secciones que no apliquen a tu proyecto y añade las propias.
+# ==============================================================================
+
+# ── Variables de entorno y secretos ───────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ── Dependencias ──────────────────────────────────────────────────────────
+node_modules/
+vendor/
+.venv/
+venv/
+__pycache__/
+
+# ── Builds / artefactos ───────────────────────────────────────────────────
+dist/
+build/
+out/
+*.log
+coverage/
+.cache/
+tmp/
+
+# ── Sistema operativo ─────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editores / IDE ────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*~

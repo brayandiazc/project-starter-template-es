@@ -1,165 +1,251 @@
-# 📌 Título del Proyecto
+<!--
+  ┌─────────────────────────────────────────────────────────────────────────┐
+  │  Esto es una PLANTILLA. Antes de publicar tu proyecto:                     │
+  │  1. Lee TEMPLATE-USAGE.md para saber cómo instanciarla.                    │
+  │  2. Reemplaza todos los [PLACEHOLDERS] (búscalos con grep, ver guía).      │
+  │  3. Borra los documentos que no apliquen a tu proyecto.                    │
+  │  4. Elimina este comentario.                                               │
+  └─────────────────────────────────────────────────────────────────────────┘
+-->
 
-Nombre autoexplicativo del proyecto, con una breve descripción clara y directa de lo que hace.
+# [NOMBRE_DEL_PROYECTO]
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-95%25-blue)
+Descripción breve y concisa del proyecto (1-2 líneas).
 
-## 🧠 Descripción
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-0%25-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-Una descripción más detallada y técnica del proyecto, incluyendo sus principales características, su propósito y cómo funciona.
+## Tabla de Contenidos
 
-## 🚀 Empezando
+- [Descripción](#descripción)
+- [Características](#características)
+- [Requisitos Previos](#requisitos-previos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Uso](#uso)
+- [Arquitectura](#arquitectura)
+- [Stack Tecnológico](#stack-tecnológico)
+- [Scripts Disponibles](#scripts-disponibles)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contribución](#contribución)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
+- [Documentación](#documentación)
+- [Soporte](#soporte)
+- [Versionado](#versionado)
+- [Autores](#autores)
+- [Licencia](#licencia)
+- [Apóyanos](#apóyanos)
+- [Agradecimientos](#agradecimientos)
 
-Estas instrucciones te guiarán para obtener una copia de este proyecto en funcionamiento en tu máquina local para propósitos de desarrollo y pruebas.
+## Descripción
 
-### 📋 Prerrequisitos
-- Sistema Operativo (por ejemplo, Ubuntu 20.04, Windows 10)
-- Lenguaje de programación: Python 3.10+
-- Framework: Django 4.2
-- Base de datos: PostgreSQL 13+
-- Otros...
+Descripción detallada del proyecto, su propósito y el problema que resuelve. Explica el contexto y cómo este proyecto aporta valor.
 
-### 🔧 Instalación
+### Flujo de Funcionamiento
+
+```mermaid
+graph LR
+    A[Usuario] -->|Solicitud| B[Autenticación]
+    B -->|Token| C[Capa de API]
+    C -->|Validación| D{¿Autorizado?}
+    D -->|Sí| E[Lógica de Negocio]
+    D -->|No| F[Error 401]
+    E -->|Consulta| G[(Base de Datos)]
+    G -->|Respuesta| E
+    E -->|Resultado| C
+    C -->|Respuesta| A
+```
+
+## Características
+
+- ✅ Característica principal 1
+- ✅ Característica principal 2
+- ✅ Característica principal 3
+- 🚧 Característica en desarrollo
+- 📋 Característica planificada
+
+## Requisitos Previos
+
+Antes de comenzar, asegúrate de tener instalado:
+
+- **[RUNTIME]**: v[VERSION] o superior
+- **[GESTOR_DE_PAQUETES]**: v[VERSION] o superior
+- **[BASE_DE_DATOS]**: v[VERSION] o superior
+- **[OTRA_HERRAMIENTA]**: v[VERSION] o superior
+
+### Accesos Necesarios
+
+- Acceso al repositorio
+- Credenciales para [SERVICIO/API]
+- [OTROS_ACCESOS] (si aplica)
+
+## Instalación
+
+### 1. Clonar el repositorio
 
 ```bash
-# Paso 1: Clonar el repositorio
-git clone https://github.com/your-user/project.git
-cd project
+git clone [URL_REPOSITORIO]
+cd [NOMBRE_DEL_PROYECTO]
+```
 
-# Paso 2: Crear entorno virtual (opcional)
-python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+### 2. Instalar dependencias
 
-# Paso 3: Instalar dependencias
-pip install -r requirements.txt
+```bash
+[COMANDO_INSTALAR_DEPENDENCIAS]
+```
 
-# Paso 4: Configurar variables de entorno
+### 3. Configurar variables de entorno
+
+```bash
 cp .env.example .env
-
-# Paso 5: Ejecutar la aplicación
-python main.py
+# Edita .env con tus credenciales
 ```
 
----
-
-## 🧪 Ejecutando las Pruebas
+### 4. Inicializar la base de datos (si aplica)
 
 ```bash
-# Ejecutar todas las pruebas
-pytest
+[COMANDO_MIGRACIONES]
+[COMANDO_SEEDS]
 ```
 
-### 🔄 Pruebas de Principio a Fin
+## Configuración
 
-Estas pruebas cubren flujos completos de usuario como autenticación, creación de entidades, etc.
+Las variables de entorno se documentan en [`.env.example`](.env.example). Cópialo a `.env` y completa los valores para tu entorno.
 
-### ⌨️ Pruebas de Estilo de Código
+> Nunca subas tu archivo `.env` con valores reales al repositorio. Ver [SECURITY.md](SECURITY.md) y [`docs/conventions/secrets.md`](docs/conventions/secrets.md).
+
+## Uso
+
+### Desarrollo local
 
 ```bash
-flake8 .
-black --check .
+[COMANDO_INICIAR_DESARROLLO]
+# La aplicación quedará disponible en http://localhost:[PUERTO]
 ```
 
+### Ejemplos de uso
 
-## 📦 Despliegue
-
-Para desplegar este proyecto en un entorno de producción:
-
-- Crear contenedor Docker (opcional)
-- Configurar servidor (Heroku, Railway, VPS)
-- Ejecutar migraciones y cargar datos iniciales
-- Configurar variables de entorno en producción
-
-
-
-## 🛠️ Construido Con
-
-- [Python](https://www.python.org/) - Lenguaje de programación
-- [Django](https://www.djangoproject.com/) - Framework web
-- [PostgreSQL](https://www.postgresql.org/) - Sistema de base de datos
-- [Docker](https://www.docker.com/) - Contenedores para despliegue
-
----
-
-## 🛣️ Roadmap
-
-- [ ] Agregar autenticación por redes sociales
-- [ ] Mejorar rendimiento con caching
-- [ ] Agregar interfaz de usuario responsiva
-- [ ] Panel de administración avanzado
-
----
-
-## 🖇️ Contribuyendo
-
-Las contribuciones son lo que hacen a la comunidad de código abierto un lugar increíble para aprender, inspirar y crear. ¡Cualquier aporte es bienvenido!
-
-```md
-1. Haz fork del repositorio
-2. Crea una rama (`git checkout -b feature/NuevaCaracterística`)
-3. Commit de tus cambios (`git commit -m 'Agrega nueva característica'`)
-4. Push a tu rama (`git push origin feature/NuevaCaracterística`)
-5. Abre un Pull Request
+```bash
+# Ejemplo de comando o llamada representativa
+[EJEMPLO]
 ```
 
-Por favor, lee el [CONTRIBUTING.md](.github/CONTRIBUTING.md) para más detalles sobre cómo colaborar.
+Para el contrato completo de la API, ver [`docs/architecture/api.md`](docs/architecture/api.md).
 
----
+## Arquitectura
 
-## 📖 Wiki
+Resumen de cómo está construido el sistema. Detalle completo en [`docs/architecture/architecture.md`](docs/architecture/architecture.md).
 
-Puedes encontrar más documentación y guías en nuestra [Wiki](https://github.com/your/project/wiki)
+## Stack Tecnológico
 
----
+Resumen de las tecnologías principales. Inventario completo (con versiones y justificación) en [`docs/architecture/stack.md`](docs/architecture/stack.md).
 
-## 🛟 Soporte
+## Scripts Disponibles
 
-Si tienes algún problema o sugerencia, por favor abre un issue [aquí](https://github.com/your/project/issues).
+```bash
+[COMANDO_DESARROLLO]   # Iniciar en modo desarrollo
+[COMANDO_BUILD]        # Compilar para producción
+[COMANDO_TEST]         # Ejecutar tests
+[COMANDO_LINT]         # Linting / formato
+```
 
----
+## Testing
 
-## 📌 Versionado
+```bash
+[COMANDO_TEST]            # Todos los tests
+[COMANDO_TEST_COBERTURA]  # Con reporte de cobertura
+```
 
-Usamos [Git](https://git-scm.com) para el control de versiones y seguimos [Semantic Versioning](https://semver.org/).
+Convenciones de testing en [`docs/conventions/testing.md`](docs/conventions/testing.md).
 
-Consulta las [etiquetas del repositorio](https://github.com/your/project/tags) para versiones disponibles.
+## Deployment
 
----
+| Ambiente   | URL              | Rama      | Deploy     |
+| ---------- | ---------------- | --------- | ---------- |
+| Desarrollo | [URL_DEV]        | `develop` | Automático |
+| Staging    | [URL_STAGING]    | `staging` | Automático |
+| Producción | [URL_PRODUCCION] | `main`    | Manual     |
 
-## ✒️ Autores
+Procedimiento detallado en [`docs/conventions/deploy.md`](docs/conventions/deploy.md).
 
-- **Brayan Diaz C** - _Trabajo inicial_ - [Brayan Diaz C](https://github.com/brayandiazc)
+## Contribución
 
-Consulta también la lista de [contribuidores](https://github.com/your/project/contributors).
+Lee la [Guía de Contribución](CONTRIBUTING.md) para conocer el flujo de trabajo (Git Flow), los estándares de código, el formato de commits (Conventional Commits) y el proceso de Pull Requests.
 
----
+## Troubleshooting
 
-## 📄 Licencia
+#### Error: "[MENSAJE_DE_ERROR_COMÚN]"
 
-Este proyecto está bajo la Licencia [MIT](LICENSE.md).
+```bash
+# Pasos para diagnosticar y resolver
+[COMANDO]
+```
 
----
+### Obtener ayuda
 
-## ❤️ Apóyanos
+1. Revisa la [documentación](docs/README.md).
+2. Busca en los [issues existentes]([URL_REPOSITORIO]/issues).
+3. Abre un nuevo issue o contacta a [EMAIL_SOPORTE].
 
-Si te gusta este proyecto y deseas apoyar su desarrollo, puedes hacerlo aquí:
+## Roadmap
 
-- [GitHub Sponsors](https://github.com/sponsors/brayandiazc)
-- [Ko-fi](https://ko-fi.com/brayandiazc)
-- [Patreon](https://patreon.com/brayandiazc)
+Visión y próximos pasos en [`docs/product/roadmap.md`](docs/product/roadmap.md).
 
----
+## Documentación
 
-## 🎁 Agradecimientos
+Toda la documentación vive en [`docs/`](docs/README.md):
 
-Estamos agradecidos por las contribuciones de la comunidad a este proyecto. Si encontraste valor en este trabajo, puedes:
+| Documento                                                                | Responde a                           |
+| ------------------------------------------------------------------------ | ------------------------------------ |
+| [`docs/architecture/architecture.md`](docs/architecture/architecture.md) | ¿Cómo está construido?               |
+| [`docs/architecture/stack.md`](docs/architecture/stack.md)               | ¿Con qué tecnologías?                |
+| [`docs/architecture/database.md`](docs/architecture/database.md)         | ¿Qué entidades y relaciones?         |
+| [`docs/architecture/api.md`](docs/architecture/api.md)                   | ¿Qué endpoints expone?               |
+| [`docs/architecture/auth.md`](docs/architecture/auth.md)                 | ¿Cómo se autentica y autoriza?       |
+| [`docs/architecture/design.md`](docs/architecture/design.md)             | ¿Cómo se diseña y por qué?           |
+| [`docs/product/business-model.md`](docs/product/business-model.md)       | ¿Por qué existe / cómo genera valor? |
+| [`docs/product/roadmap.md`](docs/product/roadmap.md)                     | ¿Hacia dónde va?                     |
+| [`docs/decisions/`](docs/decisions/README.md)                            | ¿Por qué tomamos cada decisión?      |
+| [`docs/conventions/`](docs/conventions/README.md)                        | ¿Cómo trabajamos en este repo?       |
+
+## Soporte
+
+¿Problemas o sugerencias? Abre un issue en [el repositorio]([URL_REPOSITORIO]/issues) o escribe a [EMAIL_SOPORTE].
+
+## Versionado
+
+Usamos [Git](https://git-scm.com) para el control de versiones y seguimos [Semantic Versioning](https://semver.org/). Consulta las [etiquetas]([URL_REPOSITORIO]/tags) para ver las versiones disponibles y el [CHANGELOG](CHANGELOG.md).
+
+## Autores
+
+- **[AUTOR]** — _Trabajo inicial_ — [@[USUARIO_GITHUB]](https://github.com/[USUARIO_GITHUB])
+
+Consulta también la lista de [contribuidores]([URL_REPOSITORIO]/contributors).
+
+## Licencia
+
+Este proyecto está bajo la licencia [MIT](LICENSE).
+
+## Apóyanos
+
+Si este proyecto te resulta útil y quieres apoyar su desarrollo:
+
+- [GitHub Sponsors](https://github.com/sponsors/[USUARIO_GITHUB])
+- [Ko-fi](https://ko-fi.com/[USUARIO_GITHUB])
+- [Patreon](https://patreon.com/[USUARIO_GITHUB])
+
+## Agradecimientos
+
+Gracias a quienes contribuyen a este proyecto. Si encuentras valor en él, puedes:
 
 - Compartir el proyecto 📤
-- Invitarnos un café ☕
-- Iniciar un issue o PR 🙌
+- Invitar un café ☕
+- Abrir un issue o PR 🙌
 - Dejar tu agradecimiento con un comentario 💬
 
 ---
 
-⌨️ con ❤️ por [Brayan Diaz C](https://github.com/brayandiazc) 😊
+⌨️ con ❤️ por [@[USUARIO_GITHUB]](https://github.com/[USUARIO_GITHUB])
