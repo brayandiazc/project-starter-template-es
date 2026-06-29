@@ -1,0 +1,82 @@
+# Auto-etiquetado de Pull Requests según los archivos modificados.
+# Reglas genéricas por ruta — ajústalas a la estructura real de tu proyecto.
+
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/*.md"
+      - "docs/**/*"
+      - ".github/ISSUE_TEMPLATE/**/*"
+      - ".github/PULL_REQUEST_TEMPLATE.md"
+
+frontend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "src/**/*"
+      - "app/**/*"
+      - "public/**/*"
+
+styles:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/*.css"
+      - "**/*.scss"
+      - "**/*.sass"
+
+backend:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "server/**/*"
+      - "api/**/*"
+      - "lib/**/*"
+
+database:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "**/migrations/**/*"
+      - "**/migrate/**/*"
+      - "**/*.sql"
+      - "**/seeds.*"
+
+testing:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "test/**/*"
+      - "tests/**/*"
+      - "spec/**/*"
+      - "**/*.test.*"
+      - "**/*_test.*"
+      - "**/*_spec.*"
+
+config:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "config/**/*"
+      - ".env*"
+      - "*.config.*"
+
+ci-cd:
+  - changed-files:
+    - any-glob-to-any-file:
+      - ".github/workflows/**/*"
+      - ".github/dependabot.yml"
+      - "Dockerfile*"
+      - "docker-compose*"
+
+dependencies:
+  - changed-files:
+    - any-glob-to-any-file:
+      - "package.json"
+      - "package-lock.json"
+      - "yarn.lock"
+      - "pnpm-lock.yaml"
+      - "requirements*.txt"
+      - "pyproject.toml"
+      - "Gemfile*"
+      - "go.mod"
+      - "go.sum"
+
+github:
+  - changed-files:
+    - any-glob-to-any-file:
+      - ".github/**/*"

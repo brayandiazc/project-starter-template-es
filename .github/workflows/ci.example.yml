@@ -1,0 +1,47 @@
+# ==============================================================================
+# Esqueleto de CI — NEUTRO respecto del stack.
+# Renómbralo a `ci.yml` y reemplaza los pasos [COMANDO_*] por los de tu proyecto
+# para activarlo. Mientras tenga la extensión `.example`, GitHub no lo ejecuta.
+# ==============================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # - name: Configurar entorno
+      #   run: [COMANDO_SETUP]
+      - name: Lint
+        run: echo "Reemplaza por [COMANDO_LINT]"
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    # services:
+    #   db:
+    #     image: [IMAGEN_BASE_DE_DATOS]
+    #     ports: ["5432:5432"]
+    steps:
+      - uses: actions/checkout@v4
+      # - name: Configurar entorno
+      #   run: [COMANDO_SETUP]
+      - name: Tests
+        run: echo "Reemplaza por [COMANDO_TEST]"
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: echo "Reemplaza por [COMANDO_BUILD]"
