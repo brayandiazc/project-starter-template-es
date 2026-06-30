@@ -135,7 +135,10 @@ Esta plantilla es **deliberadamente sin IA**: se centra en documentación tangib
 
 Si tu proyecto necesita tooling de IA/agentes (especificaciones, instrucciones para agentes, etc.), usa la **variante con IA** de esta plantilla, que parte de esta misma base y añade esa capa:
 
-- 🇪🇸 Español con IA: [VARIANTE_IA_ES]
-- 🇬🇧 Inglés con IA: [VARIANTE_IA_EN]
+- 🇪🇸 Español con IA: <https://github.com/brayandiazc/project-starter-template-es-ai>
+- 🇬🇧 Inglés con IA: <https://github.com/brayandiazc/project-starter-template-en-ai>
 
-> Reemplaza los enlaces de arriba por las URLs reales de tus repositorios variantes.
+### Otras variantes de esta familia
+
+- 🇪🇸 Español sin IA: este repositorio (`project-starter-template-es`).
+- 🇬🇧 Inglés sin IA: <https://github.com/brayandiazc/project-starter-template-en>
