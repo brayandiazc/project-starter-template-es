@@ -21,6 +21,30 @@ rm -rf .git
 git init
 ```
 
+### Adoptarla en un proyecto existente
+
+"Use this template" solo funciona para repositorios nuevos. Para llevar esta estructura
+a un proyecto que ya iniciaste, copia solo lo que necesites — sin tocar tu código ni tu
+historial:
+
+```bash
+# Desde la raíz de tu proyecto, en una rama nueva
+git checkout -b chore/adopt-doc-template
+
+# Descargar la plantilla sin su historial
+npx degit brayandiazc/project-starter-template-es .tpl
+
+# Traer la documentación y las plantillas de GitHub (copia selectiva)
+cp -R .tpl/docs .
+cp -R .tpl/.github .
+cp .tpl/TEMPLATE-USAGE.md .
+rm -rf .tpl
+```
+
+- **No sobrescribas** tu `README.md`, `LICENSE` ni `.gitignore` — fusiónalos a mano.
+- Rellena los `docs/` con lo que ya sabes de tu proyecto en vez de dejar placeholders.
+- Commitea en la rama, abre un PR y luego borra `TEMPLATE-USAGE.md`.
+
 ## 3. Reemplazar los placeholders
 
 Todos los placeholders usan el formato `[CORCHETES_EN_MAYÚSCULAS]`. Encuéntralos con:
