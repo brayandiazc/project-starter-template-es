@@ -6,7 +6,7 @@ Esta guía explica cómo convertir esta plantilla en la documentación real de t
 
 - **Es** una base de documentación lista para iniciar cualquier proyecto: estructura de carpetas, archivos de gobernanza y esqueletos de documentos con placeholders.
 - **No es** un boilerplate de código ni está atado a un stack concreto. No incluye dependencias ni configuración de un lenguaje específico — eso lo aporta tu proyecto.
-- La integración con agentes de IA llegará en una fase posterior (ver §8).
+- Esta variante es **sin IA**. Si quieres la versión con tooling de IA/agentes, mira §9.
 
 ## 2. Instanciar la plantilla
 
@@ -100,13 +100,45 @@ Hay dos documentos sobre "base de datos" y dos sobre "autenticación", **a prop�
 
 La misma distinción aplica a `architecture/auth.md` (cómo funciona aquí) vs `conventions/authentication.md` (reglas de autenticación).
 
-## 7. Mantener la documentación viva
+## 7. Adaptar por tipo de proyecto
+
+Esta plantilla es **multiplataforma**: el núcleo (gobernanza, arquitectura, decisiones, producto y la mayoría de las convenciones) aplica igual a proyectos web, móviles y de escritorio. Lo que cambia es un puñado de documentos con sesgo web. Ajusta según tu caso:
+
+### Web
+
+- Funciona tal cual. Aprovecha `conventions/seo.md`, `conventions/views-and-layouts.md`, `conventions/transactional-emails.md` y `architecture/api.md`.
+
+### Móvil (iOS / Android / multiplataforma)
+
+- **Borra**: `conventions/seo.md`.
+- **Reenfoca**: `conventions/views-and-layouts.md` → navegación y pantallas; `architecture/api.md` → consumo de API (tu app suele ser cliente); `conventions/deploy.md` → publicación en App Store / Play Store; la tabla de _Deployment_ del `README` → canales/tracks (beta, producción).
+- **Crea** (con [`_template.md`](docs/conventions/_template.md)): release a stores (versionado, firma/code-signing, capturas y ASO), permisos del dispositivo, notificaciones push, modo offline.
+
+### Escritorio (Electron / Tauri / nativo)
+
+- **Borra**: `conventions/seo.md`.
+- **Reenfoca**: `conventions/views-and-layouts.md` → ventanas y vistas; `conventions/deploy.md` → empaquetado e instaladores; la tabla de _Deployment_ del `README` → releases firmados.
+- **Crea**: empaquetado por SO, _code signing_ y notarización, auto-update, telemetría / reporte de crashes.
+
+> En todos los casos vale la regla general: **borra lo que no aplique** y crea convenciones nuevas con `docs/conventions/_template.md`. Hay una lista de convenciones opcionales sugeridas en [`docs/conventions/README.md`](docs/conventions/README.md).
+
+## 8. Mantener la documentación viva
 
 - Actualiza la línea **"Última actualización: [FECHA]"** al editar un documento.
 - Cada decisión arquitectónica relevante se registra como un **ADR** en `docs/decisions/` (ver su [README](docs/decisions/README.md)).
 - Mantén `CHANGELOG.md` al día siguiendo [Keep a Changelog](https://keepachangelog.com/es-ES/).
 - Convenciones adicionales (pagos, webhooks, multi-tenancy, PWA, etc.) pueden añadirse usando [`docs/conventions/_template.md`](docs/conventions/_template.md).
 
-## 8. Próximamente: integración de IA / agentes
+## 9. ¿Necesitas IA? Usa la variante con IA
 
-Una fase posterior añadirá estructura y archivos para flujos de trabajo con agentes de IA (especificaciones, instrucciones para agentes, etc.). Hasta entonces, esta plantilla se centra en documentación tangible.
+Esta plantilla es **deliberadamente sin IA**: se centra en documentación tangible y no incluye estructura ni archivos para flujos de trabajo con agentes.
+
+Si tu proyecto necesita tooling de IA/agentes (especificaciones, instrucciones para agentes, etc.), usa la **variante con IA** de esta plantilla, que parte de esta misma base y añade esa capa:
+
+- 🇪🇸 Español con IA: <https://github.com/brayandiazc/project-starter-template-es-ai>
+- 🇬🇧 Inglés con IA: <https://github.com/brayandiazc/project-starter-template-en-ai>
+
+### Otras variantes de esta familia
+
+- 🇪🇸 Español sin IA: este repositorio (`project-starter-template-es`).
+- 🇬🇧 Inglés sin IA: <https://github.com/brayandiazc/project-starter-template-en>
