@@ -6,7 +6,7 @@ Esta guía explica cómo convertir esta plantilla en la documentación real de t
 
 - **Es** una base de documentación lista para iniciar cualquier proyecto: estructura de carpetas, archivos de gobernanza y esqueletos de documentos con placeholders.
 - **No es** un boilerplate de código ni está atado a un stack concreto. No incluye dependencias ni configuración de un lenguaje específico — eso lo aporta tu proyecto.
-- La integración con agentes de IA llegará en una fase posterior (ver §8).
+- Esta variante es **sin IA**. Si quieres la versión con tooling de IA/agentes, mira §9.
 
 ## 2. Instanciar la plantilla
 
@@ -129,6 +129,13 @@ Esta plantilla es **multiplataforma**: el núcleo (gobernanza, arquitectura, dec
 - Mantén `CHANGELOG.md` al día siguiendo [Keep a Changelog](https://keepachangelog.com/es-ES/).
 - Convenciones adicionales (pagos, webhooks, multi-tenancy, PWA, etc.) pueden añadirse usando [`docs/conventions/_template.md`](docs/conventions/_template.md).
 
-## 9. Próximamente: integración de IA / agentes
+## 9. ¿Necesitas IA? Usa la variante con IA
 
-Una fase posterior añadirá estructura y archivos para flujos de trabajo con agentes de IA (especificaciones, instrucciones para agentes, etc.). Hasta entonces, esta plantilla se centra en documentación tangible.
+Esta plantilla es **deliberadamente sin IA**: se centra en documentación tangible y no incluye estructura ni archivos para flujos de trabajo con agentes.
+
+Si tu proyecto necesita tooling de IA/agentes (especificaciones, instrucciones para agentes, etc.), usa la **variante con IA** de esta plantilla, que parte de esta misma base y añade esa capa:
+
+- 🇪🇸 Español con IA: [VARIANTE_IA_ES]
+- 🇬🇧 Inglés con IA: [VARIANTE_IA_EN]
+
+> Reemplaza los enlaces de arriba por las URLs reales de tus repositorios variantes.
