@@ -86,6 +86,9 @@ git push origin hotfix/descripcion-del-fix
 
 - `main` y `develop` están protegidas: no se permite push directo, solo vía PR aprobado.
 - Mantén tu rama actualizada con `develop` (rebase o merge) antes de abrir el PR.
+- Opcional: activa los [guardrails de git](.githooks/README.md) (`git config core.hooksPath .githooks`)
+  para que estas reglas se apliquen de forma local — bloquean commits/push directos a las
+  ramas protegidas.
 
 ## Estándares de Código
 
