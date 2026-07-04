@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Guardrail opcional: bloquea commits directos en ramas protegidas.
+# Actívalo en tu clon con:  git config core.hooksPath .githooks
+set -euo pipefail
+
+branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || true)"
+case "$branch" in
+  main|master|develop)
+    echo "⛔ git-guardrails: no hagas commit directo en '$branch'. Crea una rama feat/…|fix/…|docs/…|chore/… (CONTRIBUTING.md)." >&2
+    exit 1
+    ;;
+esac
+exit 0
