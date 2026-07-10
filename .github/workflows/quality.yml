@@ -1,0 +1,50 @@
+# ==============================================================================
+# Calidad de la documentación — ACTIVO y agnóstico del stack.
+# Funciona tal cual tanto en la plantilla como en los proyectos instanciados:
+#   - formato:      Prettier sobre los archivos Markdown.
+#   - enlaces:      los enlaces relativos entre docs apuntan a archivos reales.
+#   - placeholders: en la plantilla, todo placeholder está en el catálogo de
+#                   TEMPLATE-USAGE.md; en una instancia, no queda ninguno.
+#   - scripts:      la suite de pruebas de los scripts y hooks del repo.
+# ==============================================================================
+
+name: Calidad
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  formato:
+    name: Formato Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Prettier --check
+        run: bash .github/scripts/format-markdown.sh --check
+
+  enlaces:
+    name: Enlaces internos
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verificar enlaces relativos
+        run: bash .github/scripts/check-links.sh
+
+  placeholders:
+    name: Placeholders
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Verificar placeholders
+        run: bash .github/scripts/check-placeholders.sh
+
+  scripts:
+    name: Pruebas de scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Suite de pruebas
+        run: bash .github/scripts/tests/run-tests.sh

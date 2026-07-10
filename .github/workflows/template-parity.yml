@@ -1,0 +1,34 @@
+# ==============================================================================
+# Paridad entre variantes — EXCLUSIVO DEL REPO-PLANTILLA.
+# Compara la estructura de archivos con la variante hermana en inglés para que
+# ningún cambio se quede sin portar. La condición `if` evita que corra en los
+# proyectos instanciados; aun así, bórralo al instanciar la plantilla.
+#
+# En un PR es informativo (continue-on-error): la divergencia es normal hasta
+# que el cambio equivalente aterrice en la variante hermana.
+# ==============================================================================
+
+name: Paridad entre variantes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  paridad:
+    name: Paridad con la variante hermana
+    if: github.repository == 'brayandiazc/project-starter-template-es'
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Checkout de la variante hermana (en)
+        uses: actions/checkout@v7
+        with:
+          repository: brayandiazc/project-starter-template-en
+          path: .sibling
+      - name: Comparar estructura
+        run: bash .github/scripts/check-parity.sh .sibling
