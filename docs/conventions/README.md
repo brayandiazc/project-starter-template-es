@@ -15,6 +15,7 @@ feature concreta.
 | [authentication.md](authentication.md)             | Autenticación y autorización       |
 | [branding.md](branding.md)                         | Identidad de marca y assets        |
 | [database.md](database.md)                         | Modelado de datos y migraciones    |
+| [definition-of-done.md](definition-of-done.md)     | Qué significa "terminado"          |
 | [deploy.md](deploy.md)                             | Despliegue y operaciones           |
 | [design-system.md](design-system.md)               | Sistema de diseño y componentes    |
 | [i18n.md](i18n.md)                                 | Internacionalización               |
