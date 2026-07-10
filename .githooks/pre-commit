@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
-# Guardrail opcional: bloquea commits directos en ramas protegidas.
+# Guardrail opcional: bloquea commits directos en ramas protegidas y archivos
+# de secretos en stage.
 # Actívalo en tu clon con:  git config core.hooksPath .githooks
 set -euo pipefail
 
+# 1) git-guardrails: nada de commits directos en ramas protegidas.
 branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || true)"
 case "$branch" in
   main|master|develop)
@@ -10,4 +12,18 @@ case "$branch" in
     exit 1
     ;;
 esac
+
+# 2) secret-guardrails: nada de archivos de secretos en stage. Los contratos
+#    de ejemplo (.env.example / .env.sample / .env.template) sí se permiten.
+while IFS= read -r f; do
+  base="${f##*/}"
+  case "$base" in
+    .env.example|.env.sample|.env.template) continue ;;
+    .env|.env.*|*.pem|*.key|id_rsa*|id_ed25519*|id_ecdsa*)
+      echo "⛔ secret-guardrails: '$f' parece un archivo de secretos — no lo commitees. Usa .env.example como contrato (SECURITY.md, docs/conventions/secrets.md)." >&2
+      exit 1
+      ;;
+  esac
+done < <(git diff --cached --name-only --diff-filter=ACMR)
+
 exit 0
