@@ -3,9 +3,21 @@
 Esta carpeta contiene los workflows de [GitHub Actions](https://docs.github.com/actions)
 del proyecto.
 
-Como la plantilla es agnóstica del stack, **no incluye workflows listos para
-ejecutar**: solo un esqueleto de ejemplo. Adáptalo (o créalo) según tu lenguaje
-y herramientas.
+## Workflows activos (agnósticos del stack)
+
+Funcionan tal cual, sin importar el lenguaje del proyecto — no los borres al instanciar:
+
+- [`quality.yml`](quality.yml) — calidad de la documentación: formato Markdown
+  (Prettier), enlaces internos, placeholders y la suite de pruebas de los scripts del
+  repo (ver [`../scripts/`](../scripts)).
+- [`secret-scan.yml`](secret-scan.yml) — escaneo de secretos con
+  [gitleaks](https://github.com/gitleaks/gitleaks) sobre el historial.
+
+## Exclusivo del repo-plantilla
+
+- [`template-parity.yml`](template-parity.yml) — compara la estructura con la variante
+  hermana en el otro idioma. Tiene un guard por nombre de repositorio para no ejecutarse
+  en proyectos instanciados; aun así, bórralo al instanciar la plantilla.
 
 ## Esqueleto incluido
 

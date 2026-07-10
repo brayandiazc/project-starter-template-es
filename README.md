@@ -12,8 +12,8 @@
 
 Descripción breve y concisa del proyecto (1-2 líneas).
 
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-0%25-lightgrey)
+![CI](https://github.com/[USUARIO_GITHUB]/[NOMBRE_DEL_PROYECTO]/actions/workflows/ci.yml/badge.svg)
+![Calidad](https://github.com/[USUARIO_GITHUB]/[NOMBRE_DEL_PROYECTO]/actions/workflows/quality.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Tabla de Contenidos
