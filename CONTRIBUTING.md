@@ -84,6 +84,9 @@ git push origin hotfix/descripcion-del-fix
 
 ### Políticas de ramas
 
+- **`develop` es la rama por defecto del repositorio en GitHub**: los PRs nuevos y los
+  de Dependabot apuntan ahí; `main` solo recibe merges de `develop` (release) o
+  `hotfix/*`.
 - `main` y `develop` están protegidas: no se permite push directo, solo vía PR aprobado.
 - Mantén tu rama actualizada con `develop` (rebase o merge) antes de abrir el PR.
 - Opcional: activa los [guardrails de git](.githooks/README.md) (`git config core.hooksPath .githooks`)

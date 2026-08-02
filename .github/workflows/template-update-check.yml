@@ -1,0 +1,81 @@
+# template-update-check.yml — avisa cuando la plantilla de origen publica mejoras.
+#
+# Corre semanalmente en los PROYECTOS INSTANCIADOS (necesita `.template-origin`,
+# creado al adoptar la plantilla; si no existe, no hace nada). Compara el commit de la
+# plantilla registrado en la instanciación con el HEAD actual del repo-plantilla,
+# limitado a las rutas de tooling, y abre (o actualiza) un issue con el resumen.
+# Para aplicar las mejoras: revisa el diff y aplícalo siguiendo TEMPLATE-USAGE.md.
+name: Aviso de mejoras de la plantilla
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # lunes 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Comparar con la plantilla de origen
+        id: diff
+        run: |
+          set -euo pipefail
+          if [ ! -f .template-origin ]; then
+            echo "Sin .template-origin: este repo no es una instancia. Nada que hacer."
+            echo "changed=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          repo="$(sed -n 's/^repo=//p' .template-origin | head -1)"
+          base="$(sed -n 's/^commit=//p' .template-origin | head -1)"
+          if [ -z "$repo" ] || [ -z "$base" ]; then
+            echo "::warning::.template-origin incompleto (repo/commit); omitiendo."
+            echo "changed=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git clone --quiet --filter=blob:none "$repo" /tmp/tpl
+          cd /tmp/tpl
+          if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
+            echo "::warning::El commit base $base no existe en la plantilla; omitiendo."
+            echo "changed=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          files="$(git diff --name-status "$base"..HEAD -- \
+            .github/scripts/ .github/workflows/ .githooks/ \
+            docs/conventions/_template.md || true)"
+          if [ -z "$files" ]; then
+            echo "La plantilla no tiene cambios de tooling desde $base."
+            echo "changed=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          head="$(git rev-parse --short HEAD)"
+          {
+            echo "changed=1"
+            echo "head=$head"
+            echo "files<<EOF"
+            echo "$files"
+            echo "EOF"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Abrir o actualizar el issue de aviso
+        if: steps.diff.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FILES: ${{ steps.diff.outputs.files }}
+          HEAD: ${{ steps.diff.outputs.head }}
+        run: |
+          set -euo pipefail
+          title="La plantilla de origen tiene mejoras de tooling pendientes"
+          body="$(printf 'La plantilla de origen cambió su tooling desde la última sincronización (HEAD actual: `%s`).\n\nArchivos afectados:\n\n```\n%s\n```\n\nPara revisar y aplicar las mejoras, calcula el diff de esas rutas contra tu commit base y aplícalo siguiendo TEMPLATE-USAGE.md.\n\n_Issue generado por `.github/workflows/template-update-check.yml`._' "$HEAD" "$FILES")"
+          existing="$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')"
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --label "template-update" \
+              || gh issue create --title "$title" --body "$body"
+          fi

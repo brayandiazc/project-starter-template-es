@@ -9,9 +9,17 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Added
 
+- Workflow `release.yml`: cada merge `develop` → `main` publica automáticamente el
+  tag y el release de GitHub con las notas del CHANGELOG.
+- Workflow `template-update-check.yml`: los proyectos creados desde esta plantilla
+  reciben un issue semanal cuando hay mejoras de tooling pendientes.
+
 - Estructura inicial del proyecto.
 
 ### Changed
+
+- `develop` pasa a ser la rama por defecto del repo en GitHub (los PRs y Dependabot
+  apuntan ahí); `dependabot.yml` lo fija con `target-branch`.
 
 ### Deprecated
 
