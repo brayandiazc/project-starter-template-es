@@ -1,0 +1,65 @@
+# release.yml — publica el release de GitHub automáticamente al llegar a main.
+#
+# Flujo (CONTRIBUTING.md): antes de fusionar develop → main se corta la versión
+# en CHANGELOG.md (mover Unreleased a "## [X.Y.Z] - fecha").
+# Al hacer merge a main, este workflow detecta esa versión, y si aún no tiene
+# tag, crea el tag vX.Y.Z y el release de GitHub con las notas de esa sección.
+# Así ningún merge a producción se queda sin release.
+name: Release automática
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Detectar versión sin publicar en CHANGELOG
+        id: v
+        run: |
+          set -euo pipefail
+          # Solo versiones con fecha real (ignora placeholders tipo "[FECHA]").
+          line="$(grep -m1 -E '^## \[[0-9]+\.[0-9]+\.[0-9]+\] - [0-9]{4}-[0-9]{2}-[0-9]{2}' CHANGELOG.md || true)"
+          if [ -z "$line" ]; then
+            echo "CHANGELOG sin versión fechada; nada que publicar."
+            echo "publish=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          version="$(sed -E 's/^## \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/' <<<"$line")"
+          if git rev-parse "v$version" >/dev/null 2>&1; then
+            echo "v$version ya tiene tag; nada que publicar."
+            echo "publish=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Notas: la sección de esta versión (hasta el siguiente "## [").
+          awk -v ver="[$version]" '
+            index($0, "## " ver) == 1 { on=1; next }
+            on && /^## \[/ { exit }
+            on { print }
+          ' CHANGELOG.md >/tmp/notes.md
+          {
+            echo "publish=1"
+            echo "version=$version"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Crear tag y release de GitHub
+        if: steps.v.outputs.publish == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          set -euo pipefail
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "v$VERSION" \
+            --notes-file /tmp/notes.md
+          echo "Publicado v$VERSION."
