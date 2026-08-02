@@ -18,8 +18,6 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Changed
 
-- `develop` pasa a ser la rama por defecto del repo en GitHub (los PRs y Dependabot
-  apuntan ahí); `dependabot.yml` lo fija con `target-branch`.
 
 ### Deprecated
 
