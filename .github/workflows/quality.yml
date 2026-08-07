@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Sin historial ni archivos de la plantilla
-        run: bash .github/scripts/check-herencia.sh
+        run: bash .github/scripts/check-inheritance.sh
 
   scripts:
     name: Pruebas de scripts
