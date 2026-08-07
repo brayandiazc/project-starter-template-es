@@ -125,6 +125,57 @@ printf 'Ver [docs](docs/no-existe.md).\n' >"$TMP/links-bad/README.md"
 commit_all "$TMP/links-bad"
 (bash "$CHECK_LINKS" "$TMP/links-bad" >/dev/null); check "enlace roto → falla" 1 $?
 
+# ── check-inheritance.sh ─────────────────────────────────────────────────────────
+CHECK_INHERITANCE="$REPO_ROOT/.github/scripts/check-inheritance.sh"
+if [ -f "$CHECK_INHERITANCE" ]; then
+  echo "check-inheritance.sh:"
+
+  instancia() { # $1 = nombre, $2 = fecha de instanciación
+    mkdir -p "$TMP/$1/docs/decisions"
+    printf 'repo=https://github.com/x/y\ncommit=abc\nfecha=%s\n' "$2" >"$TMP/$1/.template-origin"
+  }
+  run_herencia() { (bash "$CHECK_INHERITANCE" "$TMP/$1" > /dev/null 2>&1); }
+
+  # Sin .template-origin no es una instancia: la plantilla misma no se toca.
+  mkdir -p "$TMP/hr-plantilla"
+  run_herencia hr-plantilla; check "sin .template-origin → permite" 0 $?
+
+  # Proyecto recién instanciado y limpio.
+  instancia hr-ok 2026-08-07
+  printf '# Changelog\n\n## [Unreleased]\n\n## [0.1.0] - 2026-08-08\n\n- Inicio.\n' \
+    >"$TMP/hr-ok/CHANGELOG.md"
+  run_herencia hr-ok; check "instancia limpia → pasa" 0 $?
+
+  # Versión del CHANGELOG anterior a la instanciación = herencia.
+  instancia hr-changelog 2026-08-07
+  printf '# Changelog\n\n## [Unreleased]\n\n## [0.3.0] - 2026-08-02\n\n- De la plantilla.\n' \
+    >"$TMP/hr-changelog/CHANGELOG.md"
+  run_herencia hr-changelog; check "CHANGELOG con versión previa → falla" 1 $?
+
+  # ADR anterior a la instanciación = decisión de la plantilla.
+  instancia hr-adr 2026-08-07
+  printf '# 0004. Guardrails\n\n- **Fecha**: 2026-08-02\n' \
+    >"$TMP/hr-adr/docs/decisions/0004-guardrails.md"
+  run_herencia hr-adr; check "ADR con fecha previa → falla" 1 $?
+
+  # …pero el 0001 es el ADR canónico y SÍ se hereda.
+  instancia hr-adr-canonico 2026-08-07
+  printf '# 0001. Registrar decisiones\n\n- **Fecha**: 2026-07-01\n' \
+    >"$TMP/hr-adr-canonico/docs/decisions/0001-record-architecture-decisions.md"
+  run_herencia hr-adr-canonico; check "ADR 0001 canónico → se hereda, pasa" 0 $?
+
+  # Archivos exclusivos del repo-plantilla.
+  instancia hr-parity 2026-08-07
+  mkdir -p "$TMP/hr-parity/.github/scripts"
+  printf '#!/bin/bash\n' >"$TMP/hr-parity/.github/scripts/check-parity.sh"
+  run_herencia hr-parity; check "check-parity.sh sobrante → falla" 1 $?
+
+  # Fecha ilegible: falla abierto, no traba el flujo.
+  mkdir -p "$TMP/hr-fecha"
+  printf 'repo=x\nfecha=ayer\n' >"$TMP/hr-fecha/.template-origin"
+  run_herencia hr-fecha; check "fecha inválida → permite" 0 $?
+fi
+
 # ── Estructura de .github/workflows/ ──────────────────────────────────────────
 # GitHub ejecuta CUALQUIER .yml/.yaml de esa carpeta, sin mirar el resto del
 # nombre: un `ci.example.yml` se ejecuta de verdad y sale en verde sin probar
