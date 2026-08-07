@@ -7,8 +7,7 @@ del proyecto.
 
 Funcionan tal cual, sin importar el lenguaje del proyecto — no los borres al instanciar:
 
-- [`quality.yml`](quality.yml) — calidad de la documentación: formato Markdown
-  (Prettier), enlaces internos, placeholders y la suite de pruebas de los scripts del
+- [`quality.yml`](quality.yml) — calidad de la documentación: formato (Prettier sobre Markdown, HTML, CSS, JSON y YAML), enlaces internos, placeholders y la suite de pruebas de los scripts del
   repo (ver [`../scripts/`](../scripts)).
 - [`secret-scan.yml`](secret-scan.yml) — escaneo de secretos con
   [gitleaks](https://github.com/gitleaks/gitleaks) sobre el historial.
@@ -21,9 +20,13 @@ Funcionan tal cual, sin importar el lenguaje del proyecto — no los borres al i
 
 ## Esqueleto incluido
 
-- [`ci.example.yml`](ci.example.yml) — pipeline de CI neutro (lint → test → build).
-  Tiene la extensión `.example` **a propósito** para que GitHub no lo ejecute.
+- [`ci.yml.example`](ci.yml.example) — pipeline de CI neutro (lint → test → build).
+  La extensión `.example` va **al final a propósito**: GitHub ejecuta cualquier archivo
+  `.yml`/`.yaml` que viva en esta carpeta, sin importar qué más lleve en el nombre.
   Cuando lo adaptes a tu stack, renómbralo a `ci.yml`.
+
+> Regla para esta carpeta: si un archivo no debe ejecutarse, **no puede terminar en
+> `.yml` ni `.yaml`**. La suite de pruebas lo verifica.
 
 ## Workflows recomendados
 

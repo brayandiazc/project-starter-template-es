@@ -1,7 +1,13 @@
 # ==============================================================================
 # Esqueleto de CI — NEUTRO respecto del stack.
 # Renómbralo a `ci.yml` y reemplaza los pasos [COMANDO_*] por los de tu proyecto
-# para activarlo. Mientras tenga la extensión `.example`, GitHub no lo ejecuta.
+# para activarlo.
+#
+# OJO con el nombre: GitHub ejecuta CUALQUIER archivo `.yml`/`.yaml` dentro de
+# `.github/workflows/`, sin importar qué más lleve en el nombre. Por eso la
+# extensión va al final: `.example` no es un formato que GitHub parsee. Si lo
+# renombras a `ci.example.yml`, se ejecuta —y sale en verde sin probar nada,
+# porque sus pasos son `echo`.
 # ==============================================================================
 
 name: CI
