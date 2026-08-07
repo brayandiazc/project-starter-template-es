@@ -41,6 +41,14 @@ jobs:
       - name: Verificar placeholders
         run: bash .github/scripts/check-placeholders.sh
 
+  herencia:
+    name: Herencia de la plantilla
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Sin historial ni archivos de la plantilla
+        run: bash .github/scripts/check-herencia.sh
+
   scripts:
     name: Pruebas de scripts
     runs-on: ubuntu-latest
