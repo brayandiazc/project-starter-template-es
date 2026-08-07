@@ -1,7 +1,7 @@
 # ==============================================================================
 # Calidad de la documentación — ACTIVO y agnóstico del stack.
 # Funciona tal cual tanto en la plantilla como en los proyectos instanciados:
-#   - formato:      Prettier sobre los archivos Markdown.
+#   - formato:      Prettier sobre Markdown, HTML, CSS, JSON y YAML.
 #   - enlaces:      los enlaces relativos entre docs apuntan a archivos reales.
 #   - placeholders: en la plantilla, todo placeholder está en el catálogo de
 #                   TEMPLATE-USAGE.md; en una instancia, no queda ninguno.
@@ -18,12 +18,12 @@ on:
 
 jobs:
   formato:
-    name: Formato Markdown
+    name: Formato
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - name: Prettier --check
-        run: bash .github/scripts/format-markdown.sh --check
+        run: bash .github/scripts/format.sh --check
 
   enlaces:
     name: Enlaces internos
