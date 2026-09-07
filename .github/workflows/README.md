@@ -8,7 +8,8 @@ Funcionan tal cual, sin importar el lenguaje del proyecto — no los borres al i
 
 - [`quality.yml`](quality.yml) — salud de la documentación y del tooling: formato
   Markdown (Prettier), enlaces internos, placeholders, frontmatter de skills y agentes,
-  colores crudos en las vistas, herencia de la plantilla, la suite de pruebas de
+  colores crudos en las vistas, herencia de la plantilla, que `develop` exista en el
+  remoto, que ningún workflow diga ser otro repositorio, la suite de pruebas de
   [`../scripts/`](../scripts) y, en cada PR, la entrada en `CHANGELOG.md` bajo
   `## [Unreleased]` — el label `sin-changelog` es la excepción explícita. En los PRs
   hacia `main` añade el paso de release: nada llega a producción sin versión cortada.
