@@ -11,6 +11,39 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-09-07
+
+### Fixed
+
+- **Dependabot no podía pasar el gate del CHANGELOG.** El job `changelog` exige entrada a
+  todo PR que toque el proyecto; el bot toca el manifiesto y el lockfile, no escribe
+  changelogs y no puede aprenderlo. Sus PRs morían con el build y los escaneos en verde.
+  La excepción ya estaba diseñada —la label `sin-changelog`—, solo que nada se la ponía:
+  ahora nacen con ella.
+- **La vía de escape solo servía puesta antes de abrir el PR.** `PR_LABELS` sale del
+  payload del evento, así que poner `sin-changelog` a mano no disparaba nada y un re-run
+  replicaba el payload viejo, sin la label — justo al revés de cuando descubres que la
+  necesitas. `quality.yml` escucha ahora `labeled` y `unlabeled`. Cuesta un run por cada
+  cambio de label; una salida de emergencia inutilizable en la emergencia cuesta más.
+
+- **`check-hooks-enabled.sh` no lo invocaba nadie.** Existía, tenía sus casos en el banco
+  de pruebas y ninguna otra línea del repositorio lo llamaba: las dos llamadas vivían en
+  skills que esta variante no tiene. Y por diseño no puede correr en el CI —no ve la
+  config local de nadie— ni dentro de `pre-push` —solo se ejecuta si la config que
+  verifica ya está puesta—, así que sin una instrucción que lo llame no lo llama nadie.
+  `TEMPLATE-USAGE.md` lo invoca ahora en lugar de mandar el `git config` a pelo.
+- **`TEMPLATE-USAGE.md` remitía a skills que aquí no existen** (`/actualizar-plantilla`).
+  Ahora describe el paso en vez de delegarlo en algo que no está.
+
+### Changed
+
+- **Los PRs de Dependabot van agrupados**, uno con todos los bumps en vez de uno por
+  paquete. Fusionar N bumps sueltos en cadena deja un lockfile que nadie compiló: git no
+  marca conflicto —cada bump toca un sitio distinto del archivo— y el CI tampoco lo ve,
+  porque cada PR se construye sobre su propia rama y nunca sobre el resultado de
+  fusionarlos todos. El precio, escrito al lado en `dependabot.yml`: si un bump del grupo
+  rompe, se bloquea el grupo entero.
+
 ## [2.1.0] - 2026-09-07
 
 ### Added
@@ -116,7 +149,8 @@ del repositorio. No se reconstruye aquí: inventarlo sería peor que no tenerlo.
 
 <!--
 Enlaces de comparación entre versiones:
-[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v1.4.0...v2.0.0

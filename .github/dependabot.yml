@@ -20,9 +20,19 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    # Un PR con todas las actions en vez de uno por action: aquí no hay lockfile,
+    # así que agrupar es solo menos ruido. Donde de verdad importa es abajo.
+    groups:
+      actions:
+        patterns:
+          - "*"
     labels:
       - "dependencies"
       - "ci-cd"
+      # Dependabot no escribe el CHANGELOG, ni puede aprenderlo: sin esto, el
+      # job `changelog` de quality.yml tumba TODOS sus PRs con el resto en
+      # verde. La excepción ya estaba diseñada; ahora nacen con ella puesta.
+      - "sin-changelog"
     commit-message:
       prefix: "chore"
       include: "scope"
@@ -36,7 +46,17 @@ updates:
   #   target-branch: "develop"
   #   schedule:
   #     interval: "weekly"
-  #   labels: ["dependencies"]
+  #   # UN solo PR con todos los bumps, no uno por paquete. Fusionar N bumps
+  #   # sueltos en cadena deja un lockfile que nadie compiló: git no marca
+  #   # conflicto —cada bump toca un sitio distinto del archivo— y el CI
+  #   # tampoco lo ve, porque cada PR se construye sobre su propia rama, nunca
+  #   # sobre el resultado de fusionarlos todos. Agrupados, ese estado SÍ pasa
+  #   # por el build. El precio: si un bump del grupo rompe, se bloquea el
+  #   # grupo entero y hay que averiguar cuál fue.
+  #   groups:
+  #     dependencias:
+  #       patterns: ["*"]
+  #   labels: ["dependencies", "sin-changelog"]
   #
   # - package-ecosystem: "pip"        # Python
   #   directory: "/"
