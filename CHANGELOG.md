@@ -11,6 +11,8 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-09-07
+
 ### Fixed
 
 - **El workflow de paridad no se ejecutaba nunca en esta variante.** Su condición `if`
@@ -93,6 +95,7 @@ del repositorio. No se reconstruye aquí: inventarlo sería peor que no tenerlo.
 
 <!--
 Enlaces de comparación entre versiones:
-[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v1.4.0...v2.0.0
 -->
