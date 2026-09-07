@@ -29,6 +29,7 @@ CHECKS=(
 	"Herencia de la plantilla	.github/scripts/check-inheritance.sh"
 	"develop existe en el remoto	.github/scripts/check-git-flow.sh"
 	"Identidad de los workflows	.github/scripts/check-workflow-identity.sh"
+	"Labels declaradas y creadas	.github/scripts/check-labels.sh"
 	"Design system	.github/scripts/check-design-tokens.sh"
 	"Instrucciones del README	.github/scripts/check-instructions.sh"
 	"Suite de la plantilla	.github/scripts/tests/run-tests.sh"

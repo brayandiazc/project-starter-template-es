@@ -22,7 +22,7 @@ Pasos concretos para verificar el resultado, no el código:
 
 > El CI ya verifica formato, enlaces, entrada en el CHANGELOG y la suite de tests: no
 > hay casillas para eso. Aquí van solo las cosas que **fallan en silencio** — pasan los
-> tests y no generan un error en el monitor (`docs/conventions/ai-agents.md`).
+> tests y no generan un error en el monitor.
 
 - [ ] **Esquema de datos revisado a mano** — obligatorio si hay migración. Es lo más
       caro de cambiar después y lo único que ni los tests ni el monitoreo detectan.

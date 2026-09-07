@@ -11,6 +11,34 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+### Added
+
+- **`check-labels.sh` — que las labels de `LABELS.md` existan de verdad en el
+  repositorio.** `LABELS.md` es la fuente única y `setup-labels.sh` las crea a partir de
+  sus tablas, pero crearlas es un paso **manual**, una vez por repositorio, y nada
+  comprobaba que se hubiera dado. Los cinco repos de esta familia tenían solo las labels
+  por defecto de GitHub: ninguna de las once declaradas existía.
+
+  No es cosmético. `dependabot.yml` declara `sin-changelog` en sus PRs para que el job
+  del changelog los deje pasar — sin la label creada, Dependabot no puede aplicarla, el
+  gate los tumba igual, y **el arreglo parece hecho porque el archivo dice lo correcto**.
+  La vía de escape manual tampoco servía: no puedes ponerle a un PR una label que no
+  existe.
+
+### Fixed
+
+- **`template-update-check.yml` reventaba con un `git clone` críptico** cuando el
+  repositorio de origen ya no resolvía. Un repo se renombra y el `repo=` de
+  `.template-origin` se queda atrás: GitHub redirige un tiempo, pero si alguien reclama el
+  nombre viejo deja de resolver. Ahora avisa de que quizá se renombró y dice qué archivo
+  tocar.
+- **La plantilla de PR citaba `docs/conventions/ai-agents.md`**, que en esta variante no
+  existe. Lo leía todo el que abría un PR, y `check-links.sh` no lo veía porque estaba
+  como `code span`, no como enlace.
+- **Cuatro comentarios de `run-tests.sh` remitían a `/instanciar` y
+  `/actualizar-plantilla`** para explicar el porqué de una regla. Aquí no hay skills:
+  ahora citan el paso o `TEMPLATE-USAGE.md`, que es lo que sí está.
+
 ## [2.2.0] - 2026-09-07
 
 ### Fixed
