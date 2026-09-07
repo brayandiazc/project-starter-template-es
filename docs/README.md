@@ -10,20 +10,26 @@ responde cada pregunta.
 | [`architecture/database.md`](architecture/database.md)         | ¿Qué entidades y relaciones hay?     | Al trabajar con datos           |
 | [`architecture/auth.md`](architecture/auth.md)                 | ¿Cómo se entra y qué se permite?     | Al tocar autenticación/permisos |
 | [`architecture/api.md`](architecture/api.md)                   | ¿Qué endpoints expone?               | Al integrar o consumir la API   |
-| [`architecture/design.md`](architecture/design.md)             | ¿Cómo se ve y por qué?               | Al diseñar features o UI        |
+| [`architecture/screens.md`](architecture/screens.md)           | ¿Qué pantallas hay y por dónde va?   | Al diseñar features o UI        |
+| [`../design/README.md`](../design/README.md)                   | ¿Qué identidad visual y tokens?      | Al construir cualquier vista    |
 | [`product/business-model.md`](product/business-model.md)       | ¿Por qué existe / cómo genera valor? | Para entender el negocio        |
 | [`product/roadmap.md`](product/roadmap.md)                     | ¿Hacia dónde va?                     | Para conocer prioridades        |
 | [`decisions/`](decisions/README.md)                            | ¿Por qué tomamos cada decisión?      | Antes de re-debatir algo        |
 | [`conventions/`](conventions/README.md)                        | ¿Cómo trabajamos en este repo?       | Antes de escribir código        |
-| [`glossary.md`](glossary.md)                                   | ¿Qué significa cada término?         | Ante vocabulario desconocido    |
 
 ## Sobre la distinción `architecture/` vs `conventions/`
 
-- **`architecture/`** describe **este** proyecto en concreto (su modelo de datos, su
-  auth, su API).
-- **`conventions/`** describe **reglas reusables** de cómo trabajamos
-  (cómo modelamos datos, cómo autenticamos, cómo testeamos) — transversales a
-  cualquier feature.
+- **`architecture/`** responde **qué construye este proyecto** (su modelo de datos, su
+  API, sus pantallas).
+- **`conventions/`** responde **cómo se trabaja** (cómo se testea, cómo se despliega,
+  cómo se manejan secretos) — transversal a cualquier feature.
+
+Cuando un tema no da para las dos preguntas, vive en un solo documento: la auth entera
+está en `architecture/auth.md`, reglas incluidas. Solo la base de datos conserva el par,
+y cada regla vive en un único lado.
+
+**Por qué `design/` no está aquí dentro**: `docs/` es lo que se **lee** para construir;
+`design/` se **consume** — `design/tokens.css` lo importa el CSS de la aplicación.
 
 ## Cómo mantener esta documentación
 

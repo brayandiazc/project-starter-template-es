@@ -32,22 +32,15 @@ Formato de error estándar:
 }
 ```
 
-| Código HTTP | Significado             |
-| ----------- | ----------------------- |
-| 200 / 201   | Éxito                   |
-| 400         | Solicitud inválida      |
-| 401         | No autenticado          |
-| 403         | No autorizado           |
-| 404         | No encontrado           |
-| 422         | Validación fallida      |
-| 429         | Límite de tasa excedido |
-| 500         | Error interno           |
+Códigos HTTP estándar según la semántica de siempre — **documenta aquí solo las
+desviaciones** (un código usado de forma no obvia, un 402, un 409 con significado
+propio). Una tabla que repite qué significa 404 no es una decisión de este proyecto.
 
 ## Paginación, filtrado y ordenamiento
 
-- **Paginación**: `?page=1&per_page=20` (o cursor: `?cursor=...`).
-- **Filtrado**: `?filtro[campo]=valor`.
-- **Ordenamiento**: `?sort=-created_at`.
+- **Paginación**: [page/per_page o cursor — elige y anota el default].
+- **Filtrado y ordenamiento**: [convención elegida, p. ej. `?filtro[campo]=valor`,
+  `?sort=-created_at`].
 
 ## Endpoints
 

@@ -3,10 +3,10 @@
 > Cómo enviamos correos transaccionales en [NOMBRE_DEL_PROYECTO].
 > **Última actualización**: [FECHA]
 
-## Stack
-
-- **Proveedor de envío**: [PROVEEDOR] (producción).
-- **Entorno de desarrollo**: [HERRAMIENTA_DEV] (previsualización local sin enviar).
+> El stack concreto —motor, librería, herramientas— lo decide el proyecto y lo registra
+> [`../architecture/stack.md`](../architecture/stack.md), con el porqué en
+> [`../decisions/`](../decisions/README.md). Aquí van solo las **reglas**, que no cambian
+> al cambiar de herramienta.
 
 ## Configuración por entorno
 
@@ -38,7 +38,3 @@
 Asunto: Bienvenido a [NOMBRE_DEL_PROYECTO]
 Cuerpo: HTML + texto plano, con CTA y enlace de verificación
 ```
-
-## Referencias
-
-- [Documentación del proveedor de email].

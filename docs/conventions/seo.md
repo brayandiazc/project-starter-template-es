@@ -35,7 +35,3 @@ Cada página debe proveer, a través del layout/head compartido:
 <meta name="description" content="[Descripción de la página]" />
 <meta property="og:image" content="[URL_IMAGEN_OG]" />
 ```
-
-## Referencias
-
-- [Documentación de SEO de tu framework].

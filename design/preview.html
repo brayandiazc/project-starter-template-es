@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Design system — vista previa de tokens</title>
+
+    <!-- La ÚNICA fuente de verdad. No se copia ningún valor a este archivo: si un
+         color aquí no coincide con el producto, es que tokens.css cambió y esta
+         página ya lo refleja. Por eso no hace falta ningún check de deriva. -->
+    <link rel="stylesheet" href="tokens.css" />
+
+    <style>
+      /* Solo var(--token). Ni un hex, ni utilidades de ningún framework: existe para probar
+         los tokens, así que usar otra cosa sería probar otra cosa. */
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 2rem 1.5rem 5rem;
+        background: var(--base-100);
+        color: var(--base-content);
+        font-family: var(--sans);
+        line-height: 1.6;
+        transition: background var(--motion-transition) var(--ease-enter);
+      }
+      .wrap {
+        max-width: 60rem;
+        margin: 0 auto;
+      }
+      h1,
+      h2 {
+        font-family: var(--display);
+        line-height: 1.2;
+      }
+      h1 {
+        font-size: 2.25rem;
+        margin: 0;
+      }
+      h2 {
+        font-size: 1.25rem;
+        margin: 3rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--base-300);
+      }
+      .lead {
+        color: var(--base-content);
+        opacity: 0.7;
+        margin-top: 0.25rem;
+      }
+      code,
+      .mono {
+        font-family: var(--mono);
+        font-size: 0.85em;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      /* ── Paleta ─────────────────────────────────────────────────────────── */
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+        gap: 0.75rem;
+      }
+      .sw {
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        overflow: hidden;
+      }
+      .sw .chip {
+        padding: 1.25rem 0.875rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .sw .meta {
+        padding: 0.5rem 0.875rem 0.75rem;
+        background: var(--base-100);
+        font-size: 0.75rem;
+        line-height: 1.5;
+      }
+      .sw .meta b {
+        font-family: var(--mono);
+        font-weight: 500;
+      }
+      .ratio {
+        display: inline-block;
+        padding: 0 0.4rem;
+        border-radius: 999px;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .pass {
+        background: var(--success);
+        color: var(--success-content);
+      }
+      .fail {
+        background: var(--error);
+        color: var(--error-content);
+      }
+
+      /* ── Botones ────────────────────────────────────────────────────────── */
+      .row {
+        display: flex;
+        gap: 0.625rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .btn {
+        font: inherit;
+        font-weight: 600;
+        font-size: 0.9rem;
+        padding: 0.55rem 1.1rem;
+        border: 1px solid transparent;
+        border-radius: var(--field);
+        cursor: pointer;
+        transition: filter var(--motion-micro) var(--ease-enter);
+      }
+      .btn:hover:not(:disabled) {
+        filter: brightness(0.92);
+      }
+      .btn:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .btn:active:not(:disabled) {
+        filter: brightness(0.85);
+      }
+      .btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: var(--primary-content);
+      }
+      .btn-secondary {
+        background: var(--secondary);
+        color: var(--secondary-content);
+      }
+      .btn-accent {
+        background: var(--accent);
+        color: var(--accent-content);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--base-content);
+        border-color: var(--base-300);
+      }
+
+      /* ── Formulario ─────────────────────────────────────────────────────── */
+      .field {
+        display: grid;
+        gap: 0.3rem;
+        margin-bottom: 1rem;
+        max-width: 22rem;
+      }
+      label {
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      input,
+      select {
+        font: inherit;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.7rem;
+        border: 1px solid var(--base-300);
+        border-radius: var(--field);
+        background: var(--base-100);
+        color: var(--base-content);
+      }
+      input:focus-visible,
+      select:focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 1px;
+        border-color: var(--primary);
+      }
+      .invalid {
+        border-color: var(--error);
+      }
+      .hint {
+        font-size: 0.78rem;
+        opacity: 0.7;
+      }
+      .hint.err {
+        color: var(--error);
+        opacity: 1;
+      }
+
+      /* ── Superficies y estados ──────────────────────────────────────────── */
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+        gap: 0.75rem;
+      }
+      .card {
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        padding: 1rem;
+      }
+      .b100 {
+        background: var(--base-100);
+      }
+      .b200 {
+        background: var(--base-200);
+      }
+      .b300 {
+        background: var(--base-300);
+      }
+
+      .skeleton > i {
+        display: block;
+        height: 0.7rem;
+        margin-bottom: 0.5rem;
+        border-radius: var(--field);
+        background: var(--base-300);
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+      @keyframes pulse {
+        50% {
+          opacity: 0.45;
+        }
+      }
+      .empty {
+        text-align: center;
+        padding: 1.5rem 1rem;
+      }
+      .empty .glyph {
+        font-size: 1.6rem;
+        opacity: 0.5;
+      }
+
+      .alert {
+        display: flex;
+        gap: 0.6rem;
+        padding: 0.7rem 0.9rem;
+        border-radius: var(--field);
+        font-size: 0.88rem;
+        margin-bottom: 0.5rem;
+      }
+      .a-info {
+        background: var(--info);
+        color: var(--info-content);
+      }
+      .a-success {
+        background: var(--success);
+        color: var(--success-content);
+      }
+      .a-warning {
+        background: var(--warning);
+        color: var(--warning-content);
+      }
+      .a-error {
+        background: var(--error);
+        color: var(--error-content);
+      }
+
+      .scale > div {
+        margin-bottom: 0.35rem;
+      }
+      /* ── Registro herramienta ───────────────────────────────────────────── */
+      .tool {
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        overflow: hidden;
+        font-size: 0.8rem;
+      }
+      .tbar {
+        display: flex;
+        gap: 0.3rem;
+        align-items: center;
+        padding: 0.4rem 0.5rem;
+        background: var(--base-200);
+        border-bottom: 1px solid var(--base-300);
+      }
+      .tbtn {
+        padding: 0.2rem 0.55rem;
+        border-radius: var(--field);
+        cursor: default;
+      }
+      .tbtn.on {
+        background: var(--primary);
+        color: var(--primary-content);
+      }
+      .tbtn.accent {
+        background: var(--accent);
+        color: var(--accent-content);
+        font-weight: 600;
+      }
+      .tbody {
+        display: flex;
+        min-height: 8rem;
+      }
+      .tpanel {
+        width: 9rem;
+        padding: 0.4rem;
+        background: var(--base-200);
+        border-right: 1px solid var(--base-300);
+      }
+      .tlabel {
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.6;
+        margin-bottom: 0.3rem;
+      }
+      .titem {
+        padding: 0.22rem 0.4rem;
+        border-radius: var(--field);
+      }
+      .titem.sel {
+        background: var(--primary);
+        color: var(--primary-content);
+      }
+      .tcanvas {
+        flex: 1;
+        display: grid;
+        place-items: center;
+        background: var(--base-300);
+      }
+      .tframe {
+        width: 60%;
+        height: 60%;
+        display: grid;
+        place-items: center;
+        background: var(--base-100);
+        border: 1px solid var(--neutral);
+        border-radius: var(--field);
+        opacity: 0.9;
+      }
+      .ttime {
+        display: flex;
+        gap: 2px;
+        padding: 0.4rem;
+        background: var(--base-200);
+        border-top: 1px solid var(--base-300);
+      }
+      .tclip {
+        height: 1.4rem;
+        border-radius: 3px;
+        background: var(--neutral);
+      }
+      .tclip.accent {
+        background: var(--accent);
+      }
+
+      /* ── Navegación ─────────────────────────────────────────────────────── */
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 0.7rem 1rem;
+        background: var(--base-200);
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+      }
+      .brand {
+        font-family: var(--display);
+        font-weight: 700;
+        font-size: 1.05rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .logo {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: var(--field);
+        background: var(--primary);
+      }
+      .nav a {
+        color: var(--base-content);
+        text-decoration: none;
+        font-size: 0.88rem;
+        padding: 0.3rem 0;
+        border-bottom: 2px solid transparent;
+      }
+      .nav a:hover {
+        border-bottom-color: var(--base-300);
+      }
+      .nav a[aria-current] {
+        border-bottom-color: var(--primary);
+        font-weight: 600;
+      }
+      .avatar {
+        width: 1.9rem;
+        height: 1.9rem;
+        border-radius: 999px;
+        background: var(--accent);
+        color: var(--accent-content);
+        display: grid;
+        place-items: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .crumbs {
+        font-size: 0.8rem;
+        opacity: 0.75;
+        margin-top: 0.6rem;
+      }
+      .crumbs a {
+        color: var(--primary);
+      }
+
+      /* ── Badges ─────────────────────────────────────────────────────────── */
+      .badge {
+        display: inline-block;
+        padding: 0.12rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1.5;
+      }
+      .b-primary {
+        background: var(--primary);
+        color: var(--primary-content);
+      }
+      .b-success {
+        background: var(--success);
+        color: var(--success-content);
+      }
+      .b-warning {
+        background: var(--warning);
+        color: var(--warning-content);
+      }
+      .b-error {
+        background: var(--error);
+        color: var(--error-content);
+      }
+      .b-outline {
+        border: 1px solid var(--base-300);
+        color: var(--base-content);
+        opacity: 0.85;
+      }
+
+      /* ── Card con media ─────────────────────────────────────────────────── */
+      .media {
+        height: 6.5rem;
+        border-radius: var(--field);
+        margin: -0.25rem 0 0.75rem;
+        background: linear-gradient(135deg, var(--primary), var(--accent));
+      }
+      .card h3 {
+        margin: 0 0 0.3rem;
+        font-family: var(--display);
+        font-size: 1rem;
+      }
+      .card .foot {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        margin-top: 0.9rem;
+      }
+
+      /* ── Tabla ──────────────────────────────────────────────────────────── */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.55rem 0.7rem;
+        border-bottom: 1px solid var(--base-300);
+      }
+      thead th {
+        background: var(--base-200);
+        font-size: 0.74rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        opacity: 0.75;
+      }
+      tbody tr:hover {
+        background: var(--base-200);
+      }
+      .tbl {
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        overflow: hidden;
+      }
+
+      /* ── Diálogo nativo ─────────────────────────────────────────────────── */
+      dialog {
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        background: var(--base-100);
+        color: var(--base-content);
+        padding: 1.25rem;
+        max-width: 24rem;
+        font-family: var(--sans);
+      }
+      dialog::backdrop {
+        background: color-mix(in oklab, var(--base-content) 55%, transparent);
+      }
+
+      /* ── Progreso y tabs ────────────────────────────────────────────────── */
+      .bar {
+        height: 0.45rem;
+        border-radius: 999px;
+        background: var(--base-300);
+        overflow: hidden;
+      }
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: var(--primary);
+      }
+      .tabs {
+        display: flex;
+        gap: 0.25rem;
+        border-bottom: 1px solid var(--base-300);
+        margin-bottom: 0.75rem;
+      }
+      .tab {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+        border-bottom: 2px solid transparent;
+        cursor: default;
+      }
+      .tab[aria-selected="true"] {
+        border-bottom-color: var(--primary);
+        font-weight: 600;
+      }
+
+      /* ── Footer ─────────────────────────────────────────────────────────── */
+      .foot-site {
+        margin-top: 1rem;
+        padding: 1.25rem 1rem;
+        background: var(--base-200);
+        border: 1px solid var(--base-300);
+        border-radius: var(--box);
+        font-size: 0.85rem;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .foot-site a {
+        color: var(--base-content);
+        opacity: 0.75;
+        text-decoration: none;
+        margin-right: 0.9rem;
+      }
+      .foot-site a:hover {
+        opacity: 1;
+        text-decoration: underline;
+      }
+
+      .note {
+        border-left: 3px solid var(--accent);
+        padding: 0.6rem 0.9rem;
+        background: var(--base-200);
+        border-radius: 0 var(--field) var(--field) 0;
+        font-size: 0.88rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>Design system</h1>
+          <p class="lead">
+            Vista previa de <code>tokens.css</code>. Cambia un valor allí,
+            recarga, y aquí lo ves aplicado — no hay valores copiados en esta
+            página.
+          </p>
+        </div>
+        <button class="btn btn-ghost" id="toggle" aria-live="polite">
+          Tema: claro
+        </button>
+      </header>
+
+      <p class="note">
+        <strong>Para decidir una paleta:</strong> edita los bloques de
+        <code>:root</code> en <code>tokens.css</code> —el claro y los dos de
+        oscuro— y recarga. Los contrastes de abajo se recalculan solos: si
+        alguno sale en rojo, esa combinación no cumple
+        <strong>WCAG AA</strong> y no se usa en texto.
+      </p>
+
+      <h2>Paleta y contraste</h2>
+      <p class="lead">
+        Cada token sobre su <code>-content</code>. El ratio se mide en el
+        navegador sobre el color ya resuelto, así que refleja el tema activo.
+      </p>
+      <div class="swatches" id="swatches"></div>
+
+      <h2>Tipografía</h2>
+      <div class="scale">
+        <div
+          style="
+            font-family: var(--display);
+            font-size: 2.25rem;
+            font-weight: 700;
+          "
+        >
+          Display 36 · Space Grotesk
+        </div>
+        <div
+          style="
+            font-family: var(--display);
+            font-size: 1.5rem;
+            font-weight: 600;
+          "
+        >
+          Título 24 · Space Grotesk
+        </div>
+        <div style="font-size: 1rem">
+          Cuerpo 16 · Inter — la que se lee de verdad. Si esto no se lee cómodo,
+          el resto da igual.
+        </div>
+        <div style="font-size: 0.85rem; opacity: 0.7">
+          Secundario 14 · Inter con opacidad, no un gris nuevo
+        </div>
+        <div class="mono">Código · JetBrains Mono</div>
+      </div>
+      <p class="hint">
+        Las tres se cargan self-hosted vía Fontsource en el producto. Aquí verás
+        los
+        <em>fallbacks</em> del sistema si no las tienes instaladas — es
+        esperado.
+      </p>
+
+      <h2>Navegación</h2>
+      <nav class="nav">
+        <span class="brand"><span class="logo"></span>Producto</span>
+        <a href="#" aria-current="page">Panel</a>
+        <a href="#">Proyectos</a>
+        <a href="#">Ajustes</a>
+        <span style="flex: 1"></span>
+        <button class="btn btn-primary">Nuevo</button>
+        <span class="avatar" title="[AUTOR]">AB</span>
+      </nav>
+      <p class="crumbs">
+        <a href="#">Proyectos</a> / <a href="#">Proyecto de ejemplo</a> /
+        Detalle
+      </p>
+
+      <div class="tabs" role="tablist" style="margin-top: 1.25rem">
+        <span class="tab" role="tab" aria-selected="true">Resumen</span>
+        <span class="tab" role="tab">Actividad</span>
+        <span class="tab" role="tab">Ajustes</span>
+      </div>
+
+      <h2>Botones y estados de interacción</h2>
+      <div class="row">
+        <button class="btn btn-primary">Primario</button>
+        <button class="btn btn-secondary">Secundario</button>
+        <button class="btn btn-accent">Acento</button>
+        <button class="btn btn-ghost">Fantasma</button>
+        <button class="btn btn-primary" disabled>Deshabilitado</button>
+      </div>
+      <p class="hint">
+        Pasa el ratón, mantén pulsado y <strong>navega con Tab</strong>: hover,
+        active y foco visible están en los cuatro. El foco es el que más se
+        olvida y el que rompe el teclado.
+      </p>
+
+      <h2>Etiquetas de estado</h2>
+      <div class="row">
+        <span class="badge b-primary">Activo</span>
+        <span class="badge b-success">Publicado</span>
+        <span class="badge b-warning">Borrador</span>
+        <span class="badge b-error">Vencido</span>
+        <span class="badge b-outline">Archivado</span>
+      </div>
+
+      <h2>Formulario</h2>
+      <div class="field">
+        <label for="e">Correo</label>
+        <input id="e" type="email" placeholder="hola@ejemplo.com" />
+        <span class="hint">Te enviamos la confirmación aquí.</span>
+      </div>
+      <div class="field">
+        <label for="p">Plan</label>
+        <select id="p">
+          <option>Starter</option>
+          <option>Pro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="x">Con error</label>
+        <input id="x" class="invalid" value="no-es-un-correo" />
+        <span class="hint err"
+          >Introduce un correo válido, con @ y dominio.</span
+        >
+      </div>
+
+      <h2>Tarjetas</h2>
+      <div class="cards">
+        <div class="card">
+          <div class="media"></div>
+          <h3>Proyecto de ejemplo</h3>
+          <p class="hint">12 renders · actualizado hace 2 h</p>
+          <div class="foot">
+            <span class="badge b-success">Publicado</span>
+            <span style="flex: 1"></span>
+            <button class="btn btn-ghost">Abrir</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Uso del plan</h3>
+          <p class="hint">68 de 100 renders este mes</p>
+          <div class="bar" style="margin-top: 0.7rem">
+            <span style="width: 68%"></span>
+          </div>
+          <div class="foot">
+            <button class="btn btn-primary">Ampliar plan</button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Diálogo nativo</h3>
+          <p class="hint">
+            <code>&lt;dialog&gt;</code> del navegador: foco atrapado, Escape y
+            backdrop gratis. La regla de primitivas nativas, funcionando.
+          </p>
+          <div class="foot">
+            <button class="btn btn-accent" id="open-dlg">Abrir diálogo</button>
+          </div>
+        </div>
+      </div>
+
+      <dialog id="dlg">
+        <h3 style="margin-top: 0; font-family: var(--display)">
+          ¿Eliminar el proyecto?
+        </h3>
+        <p style="font-size: 0.9rem">
+          Se borrarán sus 12 renders. Esta acción no se puede deshacer.
+        </p>
+        <div class="row" style="justify-content: flex-end; margin-top: 1rem">
+          <button class="btn btn-ghost" id="close-dlg">Cancelar</button>
+          <button
+            class="btn btn-primary"
+            style="background: var(--error); color: var(--error-content)"
+          >
+            Eliminar
+          </button>
+        </div>
+      </dialog>
+
+      <h2>Tabla</h2>
+      <div class="tbl">
+        <table>
+          <thead>
+            <tr>
+              <th>Proyecto</th>
+              <th>Renders</th>
+              <th>Estado</th>
+              <th>Actualizado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Proyecto de ejemplo</td>
+              <td>12</td>
+              <td><span class="badge b-success">Publicado</span></td>
+              <td>hace 2 h</td>
+            </tr>
+            <tr>
+              <td>Segundo elemento</td>
+              <td>4</td>
+              <td><span class="badge b-warning">Borrador</span></td>
+              <td>ayer</td>
+            </tr>
+            <tr>
+              <td>Loft 712</td>
+              <td>0</td>
+              <td><span class="badge b-outline">Archivado</span></td>
+              <td>12 jun</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Los cuatro estados de datos</h2>
+      <p class="lead">
+        Ninguna vista se da por hecha sin los cuatro. El vacío es el que más se
+        salta y el que más define el producto.
+      </p>
+      <div class="cards">
+        <div class="card skeleton">
+          <strong style="font-size: 0.8rem; opacity: 0.6">Cargando</strong>
+          <i style="width: 70%; margin-top: 0.6rem"></i
+          ><i style="width: 90%"></i>
+          <i style="width: 45%"></i>
+        </div>
+        <div class="card empty">
+          <div class="glyph">◍</div>
+          <strong>Aún no hay proyectos</strong>
+          <p class="hint">Crea el primero para ver tus renders aquí.</p>
+          <button class="btn btn-primary">Crear proyecto</button>
+        </div>
+        <div class="card">
+          <div class="alert a-error">No se pudo cargar la lista.</div>
+          <button class="btn btn-ghost">Reintentar</button>
+        </div>
+        <div class="card">
+          <div class="alert a-success">Guardado correctamente.</div>
+          <p class="hint">Tres proyectos · actualizado hace un momento</p>
+        </div>
+      </div>
+
+      <h2>Superficies</h2>
+      <div class="cards">
+        <div class="card b100">
+          <code>base-100</code>
+          <p class="hint">Fondo principal</p>
+        </div>
+        <div class="card b200">
+          <code>base-200</code>
+          <p class="hint">Fondo alterno</p>
+        </div>
+        <div class="card b300">
+          <code>base-300</code>
+          <p class="hint">Bordes y sutiles</p>
+        </div>
+      </div>
+
+      <h2>En registro «herramienta»</h2>
+      <p class="lead">
+        Los mismos tokens en una interfaz densa —editor, timeline, panel— que es
+        otro mundo que una vista de documento: superficies apiladas, controles
+        pequeños, selección visible y casi siempre oscura por defecto. Sirve
+        para ver si la paleta aguanta ahí, no como propuesta de layout.
+      </p>
+      <div class="tool">
+        <div class="tbar">
+          <span class="tbtn on">Selección</span><span class="tbtn">Corte</span
+          ><span class="tbtn">Texto</span>
+          <span style="flex: 1"></span>
+          <span class="tbtn accent">Exportar</span>
+        </div>
+        <div class="tbody">
+          <div class="tpanel">
+            <div class="tlabel">Capas</div>
+            <div class="titem sel">Fondo</div>
+            <div class="titem">Título</div>
+            <div class="titem">Imagen 01</div>
+          </div>
+          <div class="tcanvas">
+            <div class="tframe">lienzo</div>
+          </div>
+        </div>
+        <div class="ttime">
+          <span class="tclip" style="width: 34%"></span>
+          <span class="tclip accent" style="width: 18%"></span>
+          <span class="tclip" style="width: 26%"></span>
+        </div>
+      </div>
+      <p class="hint">
+        Si aquí la paleta se aplana —todo gris, la selección no se distingue, el
+        acento no destaca— el problema no es el layout: son los tokens, y hace
+        falta más de un nivel de superficie. Ver la nota sobre densidad en
+        <code>README.md</code>.
+      </p>
+
+      <h2>Feedback</h2>
+      <div class="alert a-info">Información: algo que conviene saber.</div>
+      <div class="alert a-success">Éxito: la acción se completó.</div>
+      <div class="alert a-warning">Aviso: revisa esto antes de continuar.</div>
+      <div class="alert a-error">Error: no se pudo completar la acción.</div>
+
+      <h2>Pie de página</h2>
+      <footer class="foot-site">
+        <div>
+          <span class="brand" style="font-size: 0.95rem"
+            ><span class="logo"></span>Producto</span
+          >
+          <p class="hint" style="margin: 0.4rem 0 0">
+            Una frase que dice qué hace.
+          </p>
+        </div>
+        <div>
+          <a href="#">Precios</a><a href="#">Privacidad</a
+          ><a href="#">Términos</a>
+          <p class="hint" style="margin: 0.4rem 0 0">
+            © [AÑO] [NOMBRE_DEL_PROYECTO]
+          </p>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // El navegador ya sabe convertir oklch() a RGB. En vez de reimplementar la
+      // conversión —y equivocarnos—, le pedimos que pinte el color y le leemos el
+      // píxel. Así el ratio sale del color REAL que se está mostrando.
+      const cv = document.createElement("canvas").getContext("2d", {
+        willReadFrequently: true,
+      });
+      function rgb(color) {
+        cv.clearRect(0, 0, 1, 1);
+        cv.fillStyle = color;
+        cv.fillRect(0, 0, 1, 1);
+        return cv.getImageData(0, 0, 1, 1).data;
+      }
+      const lum = ([r, g, b]) =>
+        [r, g, b]
+          .map((v) => v / 255)
+          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4))
+          .reduce((a, v, i) => a + v * [0.2126, 0.7152, 0.0722][i], 0);
+      function ratio(a, b) {
+        const [x, y] = [lum(rgb(a)), lum(rgb(b))].sort((m, n) => n - m);
+        return (x + 0.05) / (y + 0.05);
+      }
+      const hex = (c) =>
+        "#" +
+        [...rgb(c)]
+          .slice(0, 3)
+          .map((v) => v.toString(16).padStart(2, "0"))
+          .join("")
+          .toUpperCase();
+
+      // La lista se DERIVA de las hojas cargadas: cualquier `--x` que tenga su
+      // pareja `--x-content` es una superficie del sistema, así que un token
+      // nuevo que añada /identidad aparece aquí solo. (Las superficies base-*
+      // comparten un único --base-content y se validan a ojo en el resto del
+      // preview.) Si el navegador no deja leer las reglas (algunos con file://),
+      // cae a la lista conocida.
+      const TOKENS_FALLBACK = [
+        "primary",
+        "secondary",
+        "accent",
+        "neutral",
+        "info",
+        "success",
+        "warning",
+        "error",
+      ];
+      function tokenPairs() {
+        try {
+          const props = new Set();
+          for (const sheet of document.styleSheets)
+            for (const rule of sheet.cssRules)
+              if (rule.style)
+                for (const p of rule.style)
+                  if (p.startsWith("--")) props.add(p.slice(2));
+          const pares = [...props].filter((p) => props.has(p + "-content"));
+          return pares.length ? pares : TOKENS_FALLBACK;
+        } catch {
+          return TOKENS_FALLBACK;
+        }
+      }
+      const TOKENS = tokenPairs();
+
+      function render() {
+        const cs = getComputedStyle(document.documentElement);
+        document.getElementById("swatches").innerHTML = TOKENS.map((t) => {
+          const bg = cs.getPropertyValue(`--${t}`).trim();
+          const fg = cs.getPropertyValue(`--${t}-content`).trim();
+          const r = ratio(bg, fg);
+          const ok = r >= 4.5;
+          return `<div class="sw">
+            <div class="chip" style="background:${bg};color:${fg}">${t}</div>
+            <div class="meta">
+              <b>${hex(bg)}</b> sobre <b>${hex(fg)}</b><br>
+              <span class="ratio ${ok ? "pass" : "fail"}">${r.toFixed(2)}:1</span>
+              ${ok ? "AA ✓" : "no cumple AA (4.5:1)"}
+            </div>
+          </div>`;
+        }).join("");
+      }
+
+      const btn = document.getElementById("toggle");
+      btn.addEventListener("click", () => {
+        const dark = document.documentElement.dataset.theme === "dark";
+        document.documentElement.dataset.theme = dark ? "light" : "dark";
+        btn.textContent = `Tema: ${dark ? "claro" : "oscuro"}`;
+        render(); // los tokens cambiaron: hay que recalcular los contrastes
+      });
+
+      // El <dialog> nativo trae foco atrapado, Escape y backdrop sin una línea de CSS
+      // ni de accesibilidad por nuestra parte. Esa es toda la justificación de la regla.
+      const dlg = document.getElementById("dlg");
+      document.getElementById("open-dlg").onclick = () => dlg.showModal();
+      document.getElementById("close-dlg").onclick = () => dlg.close();
+
+      render();
+    </script>
+  </body>
+</html>

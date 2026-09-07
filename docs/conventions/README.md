@@ -12,19 +12,16 @@ feature concreta.
 
 | Convención                                         | Tema                               |
 | -------------------------------------------------- | ---------------------------------- |
-| [authentication.md](authentication.md)             | Autenticación y autorización       |
-| [branding.md](branding.md)                         | Identidad de marca y assets        |
 | [database.md](database.md)                         | Modelado de datos y migraciones    |
 | [definition-of-done.md](definition-of-done.md)     | Qué significa "terminado"          |
 | [deploy.md](deploy.md)                             | Despliegue y operaciones           |
-| [design-system.md](design-system.md)               | Sistema de diseño y componentes    |
 | [i18n.md](i18n.md)                                 | Internacionalización               |
 | [quality-tooling.md](quality-tooling.md)           | Linters, formato y git hooks       |
 | [secrets.md](secrets.md)                           | Manejo de secretos y credenciales  |
 | [seo.md](seo.md)                                   | SEO y metadatos                    |
 | [testing.md](testing.md)                           | Estrategia y estándares de testing |
+| [ui.md](ui.md)                                     | Vistas, layouts y assets de marca  |
 | [transactional-emails.md](transactional-emails.md) | Correos transaccionales            |
-| [views-and-layouts.md](views-and-layouts.md)       | Vistas, layouts y UI compartida    |
 
 ## Agregar una convención
 
@@ -42,5 +39,7 @@ No se incluyen por defecto; créalas con `_template.md` si tu proyecto las neces
 - **Escritorio**: empaquetado e instaladores por SO, code signing y notarización,
   auto-update, telemetría / reporte de crashes.
 
-> Ver [`TEMPLATE-USAGE.md`](../../TEMPLATE-USAGE.md) § "Adaptar por tipo de proyecto"
-> para qué borrar y qué reenfocar según sea web, móvil o escritorio.
+> **Lo que no va aquí**: el stack concreto (lo registra
+> [`../architecture/stack.md`](../architecture/stack.md)) y el sistema de
+> diseño (vive en [`design/`](../../design/README.md), con los tokens al lado de su guía).
+> Una convención que repite un dato de esos se desincroniza sin que nadie lo note.

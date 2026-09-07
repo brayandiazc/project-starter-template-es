@@ -1,53 +1,85 @@
 # ==============================================================================
-# Esqueleto de CI — NEUTRO respecto del stack.
-# Renómbralo a `ci.yml` y reemplaza los pasos [COMANDO_*] por los de tu proyecto
-# para activarlo.
+# ⚠️  BORRA ESTE BLOQUE AL ACTIVAR EL WORKFLOW — hasta la línea de ====== de abajo.
+#
+# Son instrucciones para activarlo. Una vez renombrado a `ci.yml` sobran, y peor:
+# quedan mandando renombrar un archivo que ya se renombró.
+#
+# Para activarlo:
+#   1. Renombra este archivo a `ci.yml`.
+#   2. Reemplaza los pasos [COMANDO_*] por los de tu proyecto (están en AGENTS.md →
+#      "Configuración y comandos", y la skill `/instanciar` los toma del preset de
+#      docs/architecture/stack.md en su Paso 6).
+#   3. Borra esta cabecera.
 #
 # OJO con el nombre: GitHub ejecuta CUALQUIER archivo `.yml`/`.yaml` dentro de
-# `.github/workflows/`, sin importar qué más lleve en el nombre. Por eso la
-# extensión va al final: `.example` no es un formato que GitHub parsee. Si lo
-# renombras a `ci.example.yml`, se ejecuta —y sale en verde sin probar nada,
-# porque sus pasos son `echo`.
+# `.github/workflows/`, sin importar qué más lleve en el nombre. `ci.example.yml`
+# SÍ se ejecutaba (aparecía como workflow "CI" en verde, sin probar nada). Por eso
+# la extensión va al final: `.example` no es un formato que GitHub parsee.
 # ==============================================================================
+
+# ── POR QUÉ ARRANCA CON UN SOLO JOB (esto sí se queda) ───────────────────────
+# GitHub factura cada job redondeando hacia arriba al minuto. Tres jobs de veinte
+# segundos cuestan tres minutos, no uno. Este esqueleto empieza con lint, tests y
+# build como PASOS de un mismo job, cada uno con `!cancelled()` para que un fallo
+# no oculte a los siguientes — se siguen viendo todos los problemas de una vez,
+# que era la única ventaja de separarlos.
+#
+# SEPÁRALOS CUANDO LO MIDAS, no antes: cuando un paso tarde de verdad y bloquee a
+# los demás (unos tests de cinco minutos por delante de un lint de veinte
+# segundos, o una matriz de versiones). Ahí el paralelismo se paga solo. Antes de
+# eso, solo multiplica la factura. Ver .github/workflows/README.md.
 
 name: CI
 
+# Solo en PRs, a propósito: GitHub ejecuta los eventos `pull_request` contra el
+# **commit de merge simulado**, así que el run que saltaría al fusionar comprueba
+# exactamente el mismo árbol otra vez. Duplicar cuesta el doble y no informa más.
 on:
-  push:
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
-jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      # - name: Configurar entorno
-      #   run: [COMANDO_SETUP]
-      - name: Lint
-        run: echo "Reemplaza por [COMANDO_LINT]"
+# Un push nuevo al PR cancela la ejecución anterior: durante el desarrollo activo
+# es donde más presupuesto se va.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
-  test:
-    name: Tests
+jobs:
+  ci:
+    name: CI
     runs-on: ubuntu-latest
+
+    # Descomenta si el proyecto necesita base de datos para los tests.
     # services:
     #   db:
-    #     image: [IMAGEN_BASE_DE_DATOS]
+    #     image: postgres:16
+    #     env:
+    #       POSTGRES_PASSWORD: postgres
+    #     options: >-
+    #       --health-cmd pg_isready --health-interval 10s
+    #       --health-timeout 5s --health-retries 5
     #     ports: ["5432:5432"]
+
     steps:
       - uses: actions/checkout@v7
+
+      # Descomenta y ajusta al runtime del stack (setup-node, setup-ruby,
+      # setup-python, setup-go…). Activa su caché de dependencias: es lo que más
+      # tiempo ahorra en cada ejecución.
       # - name: Configurar entorno
       #   run: [COMANDO_SETUP]
+
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: echo "Reemplaza por [COMANDO_LINT]"
+
       - name: Tests
+        if: ${{ !cancelled() }}
+        # env:
+        #   DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
         run: echo "Reemplaza por [COMANDO_TEST]"
 
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: [lint, test]
-    steps:
-      - uses: actions/checkout@v7
+      # Bórralo si el proyecto no tiene paso de build.
       - name: Build
+        if: ${{ !cancelled() }}
         run: echo "Reemplaza por [COMANDO_BUILD]"
