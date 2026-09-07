@@ -35,3 +35,9 @@ Thumbs.db
 .vscode/
 *.swp
 *~
+
+# ── Agentes de IA (solo personal/local) ───────────────────────────────────
+# La configuración compartida de IA (AGENTS.md, CLAUDE.md, .claude/agents,
+# .claude/skills, .claude/settings.json) SÍ se versiona. Solo se ignoran los
+# ajustes personales/locales.
+.claude/settings.local.json

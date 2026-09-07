@@ -3,8 +3,8 @@
 # de su variante hermana (es ↔ en) para detectar divergencias entre variantes.
 #
 # EXCLUSIVO DEL REPO-PLANTILLA: este script (y el workflow template-parity.yml
-# que lo ejecuta) no tienen sentido en un proyecto instanciado — bórralos al
-# instanciar la plantilla.
+# que lo ejecuta) no tienen sentido en un proyecto instanciado — la skill
+# la guía de instanciación los elimina.
 #
 # Uso:
 #   bash .github/scripts/check-parity.sh <ruta-al-repo-hermano>
@@ -15,10 +15,11 @@ set -euo pipefail
 
 SIBLING="${1:?uso: check-parity.sh <ruta-al-repo-hermano>}"
 
-# Mapa de renombres conocidos entre variantes (es ↔ en). Hoy este par no tiene
-# archivos renombrados entre idiomas, así que la normalización es la identidad;
-# si algún archivo cambia de nombre entre variantes, añade aquí el `sed`
-# correspondiente (normalizando ambos lados hacia el nombre en inglés).
+# Mapa de renombres conocidos entre variantes (es ↔ en). Se normalizan ambos
+# lados hacia el nombre en inglés, así el script sirve en las dos direcciones.
+# Hoy este par no tiene archivos renombrados entre idiomas, así que la
+# normalización es la identidad; si algún archivo cambia de nombre entre
+# variantes, añade aquí el `sed` correspondiente.
 normalize() {
   cat
 }
@@ -34,6 +35,6 @@ else
   echo "   («<» solo existe aquí · «>» solo existe en la hermana)"
   cat "/tmp/parity-diff.$$"
   rm -f "/tmp/parity-diff.$$"
-  echo "→ Porta el cambio pendiente a la variante hermana o actualiza el mapa de renombres de este script."
+  echo "→ Porta el cambio pendiente (skill /portar-cambio) o actualiza el mapa de renombres de este script."
   exit 1
 fi

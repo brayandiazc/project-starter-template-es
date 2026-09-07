@@ -5,16 +5,15 @@
 > [`../architecture/database.md`](../architecture/database.md).
 > **Última actualización**: [FECHA]
 
-## Stack
-
-- **Motor**: [BASE_DE_DATOS].
-- **Capa de acceso / ORM**: [ORM].
-- **Migraciones**: [HERRAMIENTA_MIGRACIONES].
+> El stack concreto —motor, librería, herramientas— lo decide el proyecto y lo registra
+> [`../architecture/stack.md`](../architecture/stack.md), con el porqué en
+> [`../decisions/`](../decisions/README.md). Aquí van solo las **reglas**, que no cambian
+> al cambiar de herramienta.
 
 ## Reglas de modelado
 
 - **Primary keys**: [estrategia — p. ej. UUID o autoincremental] de forma consistente.
-- **Nombres**: tablas y columnas en [convención — snake_case], en [idioma].
+- **Nombres**: tablas y columnas en [convención — snake_case], en inglés.
 - **Timestamps**: toda tabla tiene `created_at` y `updated_at`.
 - **Foreign keys**: siempre con índice; `NOT NULL` salvo justificación explícita.
 - **Tipos preferidos**:
@@ -51,7 +50,3 @@ crear tabla [recurso]
 [COMANDO_MIGRAR]
 [COMANDO_ROLLBACK]
 ```
-
-## Referencias
-
-- [Documentación del ORM / motor de base de datos].

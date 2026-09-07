@@ -14,6 +14,8 @@ updates:
   # GitHub Actions usadas en los workflows
   - package-ecosystem: "github-actions"
     directory: "/"
+    # Git Flow: los PRs de dependencias van a develop, nunca directo a main.
+    target-branch: "develop"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -27,8 +29,11 @@ updates:
 
   # ── Ejemplos por ecosistema — descomenta el que corresponda ───────────────
   #
+  # (recuerda incluir target-branch: "develop" en cada ecosistema que actives)
+  #
   # - package-ecosystem: "npm"        # Node.js
   #   directory: "/"
+  #   target-branch: "develop"
   #   schedule:
   #     interval: "weekly"
   #   labels: ["dependencies"]

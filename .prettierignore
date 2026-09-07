@@ -1,0 +1,4 @@
+# Archivos GENERADOS: los produce un script y un check verifica que coincidan
+# exactamente. Si Prettier los reformatea, el generado y el comprobado dejan de ser
+# iguales y el check falla sin que nadie haya hecho nada mal.
+DESIGN.md
