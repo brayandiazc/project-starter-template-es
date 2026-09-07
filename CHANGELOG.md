@@ -11,6 +11,27 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-09-07
+
+### Added
+
+- **`check-git-flow.sh` — que `develop` exista en el remoto.** `CONTRIBUTING.md` manda
+  que toda rama de trabajo nazca de `develop`; nada lo comprobaba. Una `develop` que solo existe en local cumple la regla al ramificar y la
+  incumple al abrir el PR: `gh pr create --base develop` falla con «Base ref must be a
+  branch», y la salida obvia ante ese error —abrirlo contra `main`— es justo lo que la
+  convención prohíbe. El fallo llegaba tarde y su arreglo aparente rompía el flujo.
+- **`check-workflow-identity.sh` — que ningún workflow diga ser otro repositorio.** Los
+  workflows exclusivos del repo-plantilla se filtran con
+  `if: github.repository == 'usuario/repo'`. Al copiar uno entre repositorios esa
+  condición viaja tal cual, y entonces el job no falla: **se salta**. En la lista de
+  checks de un PR, un «skipping» gris se lee casi igual que un verde, así que una
+  comprobación puede llevar meses sin ejecutarse ni una vez. Solo opina en el
+  repo-plantilla: en una instancia, la condición nombra a la plantilla a propósito.
+
+  Los dos son el mismo criterio dicho dos veces: **una regla que solo vive en la prosa
+  no se cumple**, y un check que no corre es peor que uno que falla, porque el que falla
+  avisa. El banco de pruebas pasa de 149 a 161 casos.
+
 ## [2.0.1] - 2026-09-07
 
 ### Fixed
@@ -95,7 +116,8 @@ del repositorio. No se reconstruye aquí: inventarlo sería peor que no tenerlo.
 
 <!--
 Enlaces de comparación entre versiones:
-[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.1...HEAD
+[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.1...v2.1.0
 [2.0.1]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v1.4.0...v2.0.0
 -->
