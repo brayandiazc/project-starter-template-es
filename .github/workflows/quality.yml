@@ -36,6 +36,14 @@ name: Calidad
 on:
   pull_request:
     branches: [main, develop]
+    # `labeled`/`unlabeled` no sobran: `PR_LABELS` sale del payload del evento
+    # (`github.event.pull_request.labels`). Sin ellos, poner la label
+    # `sin-changelog` a mano no dispara nada, y un re-run replica el payload
+    # viejo — sin la label. La vía de escape solo servía puesta ANTES de abrir
+    # el PR, justo al revés de cuando descubres que la necesitas.
+    #
+    # El precio: cada cambio de label vuelve a correr el job entero.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 # Un push nuevo al PR cancela la ejecución anterior: durante el desarrollo
 # activo es donde más presupuesto se va.
