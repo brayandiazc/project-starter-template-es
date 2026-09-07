@@ -1,7 +1,7 @@
 # release.yml — publica el release de GitHub automáticamente al llegar a main.
 #
-# Flujo (CONTRIBUTING.md): antes de fusionar develop → main se corta la versión
-# en CHANGELOG.md (mover Unreleased a "## [X.Y.Z] - fecha").
+# Flujo (CONTRIBUTING.md + skill /release): antes de fusionar develop → main se
+# corta la versión en CHANGELOG.md (mover Unreleased a "## [X.Y.Z] - fecha").
 # Al hacer merge a main, este workflow detecta esa versión, y si aún no tiene
 # tag, crea el tag vX.Y.Z y el release de GitHub con las notas de esa sección.
 # Así ningún merge a producción se queda sin release.
@@ -11,6 +11,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
+# Un release a la vez: dos pushes seguidos a main antes de terminar el primero
+# verían ambos "versión sin tag" y el segundo `gh release create` fallaría.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -35,6 +41,16 @@ jobs:
             exit 0
           fi
           version="$(sed -E 's/^## \[([0-9]+\.[0-9]+\.[0-9]+)\].*/\1/' <<<"$line")"
+          # Nunca publiques una versión DE LA PLANTILLA. Pasa cuando `main` se
+          # publica antes de resetear el CHANGELOG: main apunta al commit inicial
+          # y este workflow, disparado por ese push, corre contra el contenido de
+          # esa rama —no contra lo que tengas delante— y crea el tag y el release
+          # con las notas del repositorio origen. El criterio vive en
+          # check-inheritance.sh, que ya sabe qué es herencia.
+          if ! bash .github/scripts/check-inheritance.sh --version-publicable; then
+            echo "publish=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
           if git rev-parse "v$version" >/dev/null 2>&1; then
             echo "v$version ya tiene tag; nada que publicar."
             echo "publish=0" >>"$GITHUB_OUTPUT"

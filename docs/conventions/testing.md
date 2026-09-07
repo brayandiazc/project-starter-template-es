@@ -3,11 +3,10 @@
 > Cómo escribimos y ejecutamos tests en [NOMBRE_DEL_PROYECTO].
 > **Última actualización**: [FECHA]
 
-## Stack
-
-- **Framework de tests**: [FRAMEWORK_TEST].
-- **Cobertura**: [HERRAMIENTA_COBERTURA].
-- **Tests de sistema/E2E**: [HERRAMIENTA_E2E] (si aplica).
+> El stack concreto —motor, librería, herramientas— lo decide el proyecto y lo registra
+> [`../architecture/stack.md`](../architecture/stack.md), con el porqué en
+> [`../decisions/`](../decisions/README.md). Aquí van solo las **reglas**, que no cambian
+> al cambiar de herramienta.
 
 ## Tipos de test
 
@@ -37,12 +36,11 @@ describe "[Unidad bajo prueba]"
 
 ## Comandos útiles
 
+El comando para ejecutar la suite completa vive en el bloque «Configuración y
+«Uso» del [`README.md`](../../README.md) — única copia (de ahí lo lee también
+`check-project-tests.sh`). Aquí solo los que no están allí:
+
 ```bash
-[COMANDO_TEST]            # Ejecutar todos los tests
 [COMANDO_TEST_COBERTURA]  # Con reporte de cobertura
 [COMANDO_TEST_WATCH]      # Modo watch
 ```
-
-## Referencias
-
-- [Documentación del framework de tests].

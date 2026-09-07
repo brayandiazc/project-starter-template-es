@@ -1,58 +1,104 @@
 # ==============================================================================
-# Calidad de la documentación — ACTIVO y agnóstico del stack.
-# Funciona tal cual tanto en la plantilla como en los proyectos instanciados:
-#   - formato:      Prettier sobre Markdown, HTML, CSS, JSON y YAML.
+# Calidad de la documentación y del tooling — ACTIVO y agnóstico del stack.
+# Funciona tal cual tanto en la plantilla como en los proyectos instanciados.
+#
+# UN SOLO JOB Y SOLO EN PRs, a propósito. Todos estos checks juntos tardan ~16 segundos, pero
+# GitHub factura cada job redondeando hacia arriba al minuto: repartirlos en
+# nueve jobs multiplicaba por nueve el coste sin ganar tiempo real. Cada paso
+# lleva `!cancelled()` para que un fallo no oculte a los siguientes — se siguen
+# viendo todos los problemas de una vez, que era la única ventaja de separarlos.
+#
+# Qué comprueba (la lista canónica son los steps de abajo; si esto se queda
+# atrás, mandan ellos):
+#   - formato:      Prettier sobre los archivos Markdown.
 #   - enlaces:      los enlaces relativos entre docs apuntan a archivos reales.
 #   - placeholders: en la plantilla, todo placeholder está en el catálogo de
 #                   TEMPLATE-USAGE.md; en una instancia, no queda ninguno.
+#   - herencia:     un proyecto instanciado no arrastra el CHANGELOG, los ADRs ni
+#                   los archivos del repo-plantilla (no-op en la plantilla misma).
+#   - design:       las vistas del producto usan solo tokens semánticos.
+#   - instrucciones: el README no manda ejecutar pasos que el proyecto no tiene
+#                   (p. ej. `cp .env.example .env` sin una sola variable).
 #   - scripts:      la suite de pruebas de los scripts y hooks del repo.
+#   - proyecto:     la suite del PROYECTO (salvo que ci.yml ya la corra).
+#   - changelog:    (solo en PR) el cambio trae su entrada bajo `## [Unreleased]`
+#                   (regla 5 de docs/conventions/workflow.md).
+#   - release:      (solo en PR hacia `main`) la versión está cortada y sin
+#                   publicar — nada llega a producción sin release.
 # ==============================================================================
 
 name: Calidad
 
+# Solo en PRs, a propósito. GitHub ejecuta los eventos `pull_request` contra el
+# **commit de merge simulado**, no contra la punta de la rama: el run que se
+# disparaba al fusionar comprobaba exactamente el mismo árbol tres minutos
+# después. Era la mitad de los runs del repositorio.
 on:
-  push:
-    branches: [main, develop]
   pull_request:
     branches: [main, develop]
 
+# Un push nuevo al PR cancela la ejecución anterior: durante el desarrollo
+# activo es donde más presupuesto se va.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  formato:
-    name: Formato
+  calidad:
+    name: Calidad
     runs-on: ubuntu-latest
     steps:
+      # fetch-depth: 0 → el check del changelog compara contra la base del PR y
+      # el de release necesita los tags para saber qué versión ya se publicó.
       - uses: actions/checkout@v7
-      - name: Prettier --check
+        with:
+          fetch-depth: 0
+
+      - name: Formato (Prettier)
+        if: ${{ !cancelled() }}
         run: bash .github/scripts/format.sh --check
 
-  enlaces:
-    name: Enlaces internos
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Verificar enlaces relativos
+      - name: Enlaces internos
+        if: ${{ !cancelled() }}
         run: bash .github/scripts/check-links.sh
 
-  placeholders:
-    name: Placeholders
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Verificar placeholders
+      - name: Placeholders
+        if: ${{ !cancelled() }}
         run: bash .github/scripts/check-placeholders.sh
 
-  herencia:
-    name: Herencia de la plantilla
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Sin historial ni archivos de la plantilla
+      - name: Herencia de la plantilla
+        if: ${{ !cancelled() }}
         run: bash .github/scripts/check-inheritance.sh
 
-  scripts:
-    name: Pruebas de scripts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Suite de pruebas
+      - name: Design system — vistas sin color crudo
+        if: ${{ !cancelled() }}
+        run: bash .github/scripts/check-design-tokens.sh
+
+      - name: Instrucciones del README
+        if: ${{ !cancelled() }}
+        run: bash .github/scripts/check-instructions.sh
+
+      - name: Suite de pruebas de los scripts
+        if: ${{ !cancelled() }}
         run: bash .github/scripts/tests/run-tests.sh
+
+      # Si el proyecto ya activó su propio CI (ci.yml), la suite corre allí:
+      # repetirla aquí pagaba el minuto redondeado dos veces por PR — justo el
+      # coste que la cabecera de este workflow argumenta evitar. En local,
+      # pre-push la sigue corriendo siempre (ahí es gratis).
+      - name: Pruebas del proyecto
+        if: ${{ !cancelled() && hashFiles('.github/workflows/ci.yml') == '' }}
+        run: bash .github/scripts/check-project-tests.sh
+
+      # Solo en PRs: en un push a develop/main el diff contra sí mismo no dice nada.
+      - name: Entrada en el CHANGELOG
+        if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+        env:
+          # La label `sin-changelog` es la vía explícita para pedir la excepción.
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: bash .github/scripts/check-changelog.sh "${{ github.event.pull_request.base.sha }}"
+
+      # Solo en los PRs que van a producción: son los que publican.
+      - name: Versión cortada y sin publicar
+        if: ${{ !cancelled() && github.event_name == 'pull_request' && github.base_ref == 'main' }}
+        run: bash .github/scripts/check-release.sh

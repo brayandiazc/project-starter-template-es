@@ -3,9 +3,10 @@
 > Reglas y estándares de [TEMA] en [NOMBRE_DEL_PROYECTO].
 > **Última actualización**: [FECHA]
 
-## Stack
-
-- [Herramientas / librerías que cubre esta convención].
+> El stack concreto —motor, librería, herramientas— lo decide el proyecto y lo registra
+> [`../architecture/stack.md`](../architecture/stack.md), con el porqué en
+> [`../decisions/`](../decisions/README.md). Aquí van solo las **reglas**, que no cambian
+> al cambiar de herramienta.
 
 ## Estructura
 
@@ -21,13 +22,3 @@
 ```text
 [Ejemplo de cómo hacerlo bien — reemplaza con código de tu stack]
 ```
-
-## Comandos útiles
-
-```bash
-[COMANDO_RELEVANTE]
-```
-
-## Referencias
-
-- [Enlaces a documentación oficial o ADRs relacionados].

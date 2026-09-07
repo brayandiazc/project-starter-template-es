@@ -1,54 +1,48 @@
 # Descripción
 
-Resumen de los cambios y qué problema resuelven.
+Qué cambia y qué problema resuelve. Si implementa una spec, enlázala.
 
-## Tipo de Cambio
+## Tipo de cambio
 
 - [ ] Bug fix
 - [ ] Nueva funcionalidad
 - [ ] Breaking change
-- [ ] Refactorización
+- [ ] Refactorización (sin cambio de comportamiento)
 - [ ] Documentación
-- [ ] Configuración / DevOps
+- [ ] Configuración / tooling
 
-## Cambios Realizados
+## Cómo comprobar que funciona
 
-**Antes**: Comportamiento actual del sistema.
-
-**Después**: Nuevo comportamiento implementado.
-
-## Instrucciones de Prueba
+Pasos concretos para verificar el resultado, no el código:
 
 1.
 2.
-3.
 
-## Checklist
+## Lo que ninguna máquina comprueba
 
-- [ ] El código sigue las guías de estilo del proyecto
-- [ ] Auto-revisión completada
-- [ ] Código comentado en secciones complejas
-- [ ] Tests ejecutados exitosamente
-- [ ] Tests nuevos añadidos (si aplica)
-- [ ] Sin regresiones en funcionalidad existente
-- [ ] Documentación actualizada (si aplica)
-- [ ] Cumple la Definition of Done (`docs/conventions/definition-of-done.md`)
+> El CI ya verifica formato, enlaces, entrada en el CHANGELOG y la suite de tests: no
+> hay casillas para eso. Aquí van solo las cosas que **fallan en silencio** — pasan los
+> tests y no generan un error en el monitor (`docs/conventions/ai-agents.md`).
 
-## Issues Relacionados
-
-Closes #
-Relates to #
+- [ ] **Esquema de datos revisado a mano** — obligatorio si hay migración. Es lo más
+      caro de cambiar después y lo único que ni los tests ni el monitoreo detectan.
+- [ ] Si toca **autorización**: probada con un rol distinto al propio.
+- [ ] Si toca **colas o móvil**: las operaciones de creación son idempotentes.
+- [ ] Si toca **UI**: los cuatro estados (loading, empty, error, éxito) y ambos temas.
+- [ ] Si hay **componente custom**: focus trap, Escape, ARIA y navegación por teclado.
+- [ ] Documentación afectada actualizada e ítem del roadmap marcado si la spec lo completa.
 
 ## Impacto
 
-- **Performance**: Ninguno / Mejora / Degradación
-- **Breaking changes**: Sí / No
+- **Breaking change**: Sí / No — si sí, qué rompe y qué hay que hacer
 - **Requiere migración**: Sí / No
+- **Crece sin límite algo** (storage, cómputo, llamadas a un modelo): Sí / No — si sí,
+  ¿está en el precio?
 
 ## Evidencia
 
-Screenshots, GIFs o videos demostrando los cambios (si aplica).
+Capturas o vídeo si hay UI — **en los dos temas**.
 
-## Notas para Revisores
+## Issues
 
-Áreas específicas que requieren atención o decisiones de diseño tomadas.
+Closes #

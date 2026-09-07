@@ -1,29 +1,82 @@
 #!/usr/bin/env bash
-# Guardrail opcional: bloquea commits directos en ramas protegidas y archivos
-# de secretos en stage.
-# Actívalo en tu clon con:  git config core.hooksPath .githooks
-set -euo pipefail
+# pre-commit — formatea lo que está en stage y lo vuelve a agregar.
+#
+# El formato no es una decisión, es ruido: por eso este hook NUNCA bloquea el
+# commit. Corrige lo que puede, avisa de lo que no, y sale con 0 siempre. Un
+# hook que bloquea por formato solo enseña a usar `git commit --no-verify`.
+#
+# Alcance: los archivos EN STAGE que Prettier entiende sin plugins (md, html,
+# css, json, yml). El código de la aplicación es cosa del linter del stack
+# (docs/conventions/quality-tooling.md).
+#
+# Activación (una vez por clon, no se versiona en .git/config):
+#   git config core.hooksPath .githooks
+#
+# Saltárselo puntualmente: git commit --no-verify
+set -uo pipefail
 
-# 1) git-guardrails: nada de commits directos en ramas protegidas.
-branch="$(git symbolic-ref --short -q HEAD 2>/dev/null || true)"
-case "$branch" in
-  main|master|develop)
-    echo "⛔ git-guardrails: no hagas commit directo en '$branch'. Crea una rama feat/…|fix/…|docs/…|chore/… (CONTRIBUTING.md)." >&2
-    exit 1
-    ;;
-esac
+# ── Archivos en stage que nos tocan ──────────────────────────────────────────
+# --diff-filter=ACM: añadidos, copiados y modificados; los borrados no se formatean.
+# ACMR: añadidos, copiados, modificados y renombrados. quotePath=false para que
+# los nombres con acentos salgan tal cual y no escapados ("documentaci\303\263n.md").
+staged="$(git -c core.quotePath=false diff --cached --name-only --diff-filter=ACMR \
+  | grep -Ei '\.(md|html|css|json|ya?ml)$' || true)"
 
-# 2) secret-guardrails: nada de archivos de secretos en stage. Los contratos
-#    de ejemplo (.env.example / .env.sample / .env.template) sí se permiten.
+[ -z "$staged" ] && exit 0
+
+if ! command -v npx > /dev/null 2>&1; then
+	echo "pre-commit: sin Node.js (npx), no se formatea. El CI lo verificará igual." >&2
+	exit 0
+fi
+
+# ── Solo archivos íntegramente en stage ──────────────────────────────────────
+# Si un archivo tiene además cambios sin agregar, formatearlo y re-agregarlo
+# metería en el commit trabajo que decidiste dejar fuera. Ese se salta.
+declare -a files=()
+declare -a skipped=()
+
 while IFS= read -r f; do
-  base="${f##*/}"
-  case "$base" in
-    .env.example|.env.sample|.env.template) continue ;;
-    .env|.env.*|*.pem|*.key|id_rsa*|id_ed25519*|id_ecdsa*)
-      echo "⛔ secret-guardrails: '$f' parece un archivo de secretos — no lo commitees. Usa .env.example como contrato (SECURITY.md, docs/conventions/secrets.md)." >&2
-      exit 1
-      ;;
-  esac
-done < <(git diff --cached --name-only --diff-filter=ACMR)
+	[ -z "$f" ] && continue
+	[ -f "$f" ] || continue
+	if [ -n "$(git -c core.quotePath=false diff --name-only -- "$f")" ]; then
+		skipped+=("$f")
+	else
+		files+=("$f")
+	fi
+done <<< "$staged"
+
+if [ "${#skipped[@]}" -gt 0 ]; then
+	echo "pre-commit: sin formatear (tienen cambios sin agregar al stage):" >&2
+	printf '   · %s\n' "${skipped[@]}" >&2
+fi
+
+[ "${#files[@]}" -eq 0 ] && exit 0
+
+# ── Formatear y re-agregar ───────────────────────────────────────────────────
+# La versión de Prettier se LEE de format.sh, que es donde vive fijada. Tenerla
+# escrita en dos sitios es garantizar que se desincronicen, y dos versiones de un
+# formateador en el mismo repo se pelean: `pre-commit` formatea de una forma y el
+# check del CI exige otra. Si no se puede leer, se cae a `prettier@3` (el
+# comportamiento anterior): peor, pero nunca bloquea el commit.
+PRETTIER="$(sed -n 's/^PRETTIER="\(.*\)"$/\1/p' .github/scripts/format.sh 2>/dev/null || true)"
+[ -n "$PRETTIER" ] || PRETTIER="prettier@3"
+
+# --log-level warn: silencio si no hay nada que decir. Si Prettier falla (p. ej.
+# un JSON malformado) avisamos, pero no bloqueamos: ya lo dirá el CI.
+if ! npx --yes "$PRETTIER" --write --log-level warn -- "${files[@]}" > /dev/null 2>&1; then
+	echo "pre-commit: Prettier no pudo procesar algún archivo (¿sintaxis inválida?)." >&2
+	echo "   Revísalo con: npx $PRETTIER --check <archivo>" >&2
+fi
+
+# Lo que Prettier tocó ahora difiere del índice: eso es exactamente lo reformateado.
+changed="$(git -c core.quotePath=false diff --name-only -- "${files[@]}")"
+
+if [ -n "$changed" ]; then
+	printf '%s\n' "$changed" | while IFS= read -r f; do
+		[ -n "$f" ] && git add -- "$f"
+	done
+	echo "pre-commit: formateado y re-agregado al commit:" >&2
+	printf '%s\n' "$changed" | sed 's/^/   · /' >&2
+fi
 
 exit 0

@@ -1,10 +1,10 @@
 # template-update-check.yml — avisa cuando la plantilla de origen publica mejoras.
 #
 # Corre semanalmente en los PROYECTOS INSTANCIADOS (necesita `.template-origin`,
-# creado al adoptar la plantilla; si no existe, no hace nada). Compara el commit de la
+# que escribe /instanciar; si no existe, no hace nada). Compara el commit de la
 # plantilla registrado en la instanciación con el HEAD actual del repo-plantilla,
 # limitado a las rutas de tooling, y abre (o actualiza) un issue con el resumen.
-# Para aplicar las mejoras: revisa el diff y aplícalo siguiendo TEMPLATE-USAGE.md.
+# Para aplicar las mejoras: skill /actualizar-plantilla.
 name: Aviso de mejoras de la plantilla
 
 on:
@@ -46,7 +46,7 @@ jobs:
             exit 0
           fi
           files="$(git diff --name-status "$base"..HEAD -- \
-            .github/scripts/ .github/workflows/ .githooks/ \
+            .claude/ .github/scripts/ .github/workflows/ specs/_template/ \
             docs/conventions/_template.md || true)"
           if [ -z "$files" ]; then
             echo "La plantilla no tiene cambios de tooling desde $base."
@@ -71,7 +71,7 @@ jobs:
         run: |
           set -euo pipefail
           title="La plantilla de origen tiene mejoras de tooling pendientes"
-          body="$(printf 'La plantilla de origen cambió su tooling desde la última sincronización (HEAD actual: `%s`).\n\nArchivos afectados:\n\n```\n%s\n```\n\nPara revisar y aplicar las mejoras, calcula el diff de esas rutas contra tu commit base y aplícalo siguiendo TEMPLATE-USAGE.md.\n\n_Issue generado por `.github/workflows/template-update-check.yml`._' "$HEAD" "$FILES")"
+          body="$(printf 'La plantilla de origen cambió su tooling desde la última sincronización (HEAD actual: `%s`).\n\nArchivos afectados:\n\n```\n%s\n```\n\nPara revisar y aplicar las mejoras, corre la skill `/actualizar-plantilla` en Claude Code.\n\n_Issue generado por `.github/workflows/template-update-check.yml`._' "$HEAD" "$FILES")"
           existing="$(gh issue list --state open --search "in:title \"$title\"" --json number --jq '.[0].number // empty')"
           if [ -n "$existing" ]; then
             gh issue comment "$existing" --body "$body"
