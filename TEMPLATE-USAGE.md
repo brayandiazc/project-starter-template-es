@@ -67,16 +67,20 @@ sabes cuáles son en vez de descubrirlo cuando ya se perdieron.
   adoptaste una versión anterior, algún documento tuyo puede llamarse ahora de otra
   forma. Traer el nuevo sin borrar el viejo **deja los dos**, con contenido distinto y
   sin que ningún check lo note.
-- Activa los git hooks: `git config core.hooksPath .githooks`.
+- Activa los git hooks: `bash .github/scripts/check-hooks-enabled.sh --arreglar`.
+  Hace lo mismo que `git config core.hooksPath .githooks` y además comprueba que sean
+  ejecutables. Este check no puede correr en el CI —no ve la config local de nadie— ni
+  dentro de `pre-push` —solo se ejecuta si la config que verifica ya está puesta—, así
+  que si no lo llamas aquí, no lo llama nadie.
 - Escribe `.template-origin` (repo, commit, fecha y `versiones=` con las versiones
   del CHANGELOG de la plantilla — sin ellas, `check-inheritance.sh` cae a un criterio
-  por fecha que puede acusar un release tuyo del mismo día) para que
-  `/actualizar-plantilla` y el workflow de avisos funcionen de aquí en adelante.
+  por fecha que puede acusar un release tuyo del mismo día) para que el workflow de
+  avisos funcione de aquí en adelante.
 - Rellena los `docs/` nuevos con lo que ya sabes del proyecto en vez de dejar placeholders.
 - Commitea en la rama, abre un PR y luego borra `TEMPLATE-USAGE.md`.
 
-> Si tu proyecto **ya tenía** una versión de esta plantilla, el camino corto es
-> `/actualizar-plantilla`, que hace todo esto y además calcula el diff del tooling.
+> Si tu proyecto **ya tenía** una versión de esta plantilla, calcula el diff del tooling
+> entre tu commit de origen y el HEAD de la plantilla, y aplica solo eso.
 
 ## 3. Reemplazar los placeholders
 
