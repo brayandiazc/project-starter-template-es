@@ -11,6 +11,16 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+### Fixed
+
+- **El workflow de paridad no se ejecutaba nunca en esta variante.** Su condición `if`
+  y el repositorio hermano seguían nombrando a las variantes con IA, así que el job
+  aparecía como «skipping» en cada PR. Un check que no corre es peor que uno que falla:
+  el segundo avisa. Ahora compara contra `project-starter-template-en`.
+- **Los workflows apuntaban a skills que aquí no existen** (`/instanciar`,
+  `/actualizar-plantilla`) y a `AGENTS.md`, que es de las variantes con IA. Ahora
+  remiten a `TEMPLATE-USAGE.md` y al bloque «Uso» del README, que es lo que hay.
+
 ## [2.0.0] - 2026-09-07
 
 ### Added
