@@ -90,6 +90,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: bash .github/scripts/check-workflow-identity.sh
 
+      # Declarar una label en LABELS.md no la crea. Y `dependabot.yml` depende de
+      # que `sin-changelog` exista de verdad, no de que esté escrita.
+      - name: Labels declaradas y creadas
+        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/check-labels.sh
+
       - name: Design system — vistas sin color crudo
         if: ${{ !cancelled() }}
         run: bash .github/scripts/check-design-tokens.sh

@@ -13,6 +13,7 @@ CHECK_CHANGELOG="$REPO_ROOT/.github/scripts/check-changelog.sh"
 CHECK_RELEASE="$REPO_ROOT/.github/scripts/check-release.sh"
 CHECK_GIT_FLOW="$REPO_ROOT/.github/scripts/check-git-flow.sh"
 CHECK_WF_IDENTITY="$REPO_ROOT/.github/scripts/check-workflow-identity.sh"
+CHECK_LABELS="$REPO_ROOT/.github/scripts/check-labels.sh"
 CHECK_INSTRUCCIONES="$REPO_ROOT/.github/scripts/check-instructions.sh"
 CHECK_HOOKS="$REPO_ROOT/.github/scripts/check-hooks-enabled.sh"
 
@@ -74,7 +75,7 @@ commit_all "$TMP/inst-ok"
 (bash "$CHECK_PLACEHOLDERS" "$TMP/inst-ok" >/dev/null); check "instancia: limpio → pasa" 0 $?
 
 # Modo instancia: placeholder MARCADO como pendiente → pasa.
-# /instanciar dice "no inventes datos, deja el placeholder"; sin esta excepción esa
+# La instanciación dice "no inventes datos, deja el placeholder"; sin esta excepción esa
 # regla y este check se contradicen y el primer PR de todo proyecto sale en rojo.
 make_repo inst-pend
 printf '# Mi proyecto\nContacto: [EMAIL_SOPORTE] <!-- pendiente: aún sin buzón -->\n' >"$TMP/inst-pend/README.md"
@@ -286,7 +287,7 @@ commit_all "$TMP/inst-github-ok"
 salida_gh="$(bash "$CHECK_PLACEHOLDERS" "$TMP/inst-github-ok" 2>&1 || true)"
 printf '%s' "$salida_gh" | grep -q "no queda ninguno"; check "instancia: el resumen no lista [BUG] como pendiente" 0 $?
 
-# --rutas-sustituibles: el alcance de la pasada de relleno de /instanciar. La pasada
+# --rutas-sustituibles: el alcance de la pasada de relleno al instanciar. La pasada
 # global corrompió los fixtures de ESTE banco y rellenó las plantillas internas de
 # specs/ y docs/, que existen para conservar sus placeholders — lo segundo se cobró
 # semanas después, cuando spec-guardrails acusó de "sin rellenar" la línea que sí lo
@@ -797,7 +798,7 @@ if [ -f "$CHECK_HERENCIA" ]; then
 
   # ── --version-publicable ───────────────────────────────────────────────────
   # La guarda que impide publicar la release DE LA PLANTILLA. Pasó de verdad:
-  # /instanciar crea main en el Paso 0 apuntando al commit inicial (CHANGELOG
+  # Al instanciar, main se crea apuntando al commit inicial (CHANGELOG
   # heredado) y el push de main dispara release.yml, que publicó un v1.0.0 con
   # las notas del repo origen. Y lo caro venía después: el día que el proyecto
   # llegue a su propia v1.0.0, release.yml diría "ya tiene tag" y se saltaría
@@ -934,7 +935,7 @@ if [ -f "$CHECK_INSTRUCCIONES" ]; then
   run_instr in-comentado; check "instrucciones: variables solo comentadas → falla" 1 $?
 
   # Sin la línea del README no hay nada que reprochar, aunque el archivo esté vacío:
-  # conservar .env.example vacío CON su explicación es lo que manda /instanciar.
+  # conservar .env.example vacío CON su explicación es lo que manda TEMPLATE-USAGE.md.
   instr in-podado
   printf '# Ninguna variable todavía.\n' >"$TMP/in-podado/.env.example"
   printf '# P\n\n```bash\ngit clone x\n```\n' >"$TMP/in-podado/README.md"
@@ -1170,6 +1171,66 @@ if [ -f "$CHECK_WF_IDENTITY" ]; then
     >"$TMP/wf-ejemplo/.github/workflows/ci.yml.example"
   (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-ejemplo" >/dev/null 2>&1)
   check "condición en un .yml.example → también se revisa" 1 $?
+fi
+
+# ── check-labels.sh ───────────────────────────────────────────────────────────
+# Declarar una label no la crea. Y hay mecanismos que dependen de que exista:
+# dependabot.yml pone `sin-changelog` a sus PRs para pasar el gate del changelog
+# — sin la label creada el gate los tumba igual, y el arreglo parece hecho
+# porque el archivo dice lo correcto.
+if [ -f "$CHECK_LABELS" ]; then
+  echo "check-labels.sh:"
+
+  # `gh` de mentira: imprime las labels que le pasemos por LABELS_FALSAS.
+  mkdir -p "$TMP/bin"
+  cat >"$TMP/bin/gh" <<'GHSTUB'
+#!/usr/bin/env bash
+if [ "${1:-}" = "label" ]; then printf '%s\n' ${LABELS_FALSAS:-}; exit 0; fi
+exit 0
+GHSTUB
+  chmod +x "$TMP/bin/gh"
+
+  crea_labels_md() {  # $1 = nombre, $2 = labels declaradas separadas por espacios
+    mkdir -p "$TMP/$1/.github"
+    {
+      printf '# Labels\n\n| Label | Color | Qué significa |\n| --- | --- | --- |\n'
+      for l in $2; do printf '| `%s` | `#FF0000` | x |\n' "$l"; done
+    } >"$TMP/$1/.github/LABELS.md"
+  }
+
+  corre_labels() {  # $1 = carpeta, $2 = labels que "existen" en el repo
+    (PATH="$TMP/bin:$PATH" LABELS_FALSAS="$2" GITHUB_REPOSITORY=yo/mio \
+      bash "$CHECK_LABELS" "$TMP/$1" >/dev/null 2>&1)
+  }
+
+  crea_labels_md lb-completo "bug ci-cd sin-changelog"
+  corre_labels lb-completo "bug ci-cd sin-changelog"
+  check "todas las declaradas existen → pasa" 0 $?
+
+  crea_labels_md lb-falta "bug ci-cd sin-changelog"
+  corre_labels lb-falta "bug ci-cd"
+  check "falta una label declarada → falla" 1 $?
+
+  # El caso real que motivó el check: el repo solo tiene las de fábrica.
+  crea_labels_md lb-fabrica "sin-changelog dependencies"
+  corre_labels lb-fabrica "bug documentation duplicate enhancement question wontfix"
+  check "repo solo con labels de fábrica → falla" 1 $?
+
+  # Falla abierto: sin tablas parseables no hay nada declarado que exigir.
+  mkdir -p "$TMP/lb-sin-tabla/.github"
+  printf '# Labels\n\nprosa sin tablas\n' >"$TMP/lb-sin-tabla/.github/LABELS.md"
+  corre_labels lb-sin-tabla "bug"
+  check "LABELS.md sin tablas → no opina" 0 $?
+
+  mkdir -p "$TMP/lb-sin-md"
+  corre_labels lb-sin-md "bug"
+  check "repo sin LABELS.md → no opina" 0 $?
+
+  # Sin saber qué repositorio es este no hay a quién preguntarle.
+  crea_labels_md lb-sin-slug "sin-changelog"
+  (cd "$TMP/lb-sin-slug" && PATH="$TMP/bin:$PATH" GITHUB_REPOSITORY= \
+    bash "$CHECK_LABELS" . >/dev/null 2>&1)
+  check "sin remoto ni GITHUB_REPOSITORY → no opina" 0 $?
 fi
 
 # ── Resumen ───────────────────────────────────────────────────────────────────

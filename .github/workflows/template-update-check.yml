@@ -38,7 +38,14 @@ jobs:
             echo "changed=0" >>"$GITHUB_OUTPUT"
             exit 0
           fi
-          git clone --quiet --filter=blob:none "$repo" /tmp/tpl
+          # Un repositorio se renombra y este puntero se queda atrás: GitHub
+          # redirige un tiempo, pero si alguien reclama el nombre viejo, deja de
+          # resolver. Sin este aviso, el fallo es un 'git clone' críptico.
+          if ! git clone --quiet --filter=blob:none "$repo" /tmp/tpl 2>/dev/null; then
+            echo "::warning::No se pudo clonar $repo. Si la plantilla se renombró, actualiza 'repo=' en .template-origin."
+            echo "changed=0" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
           cd /tmp/tpl
           if ! git cat-file -e "$base^{commit}" 2>/dev/null; then
             echo "::warning::El commit base $base no existe en la plantilla; omitiendo."
