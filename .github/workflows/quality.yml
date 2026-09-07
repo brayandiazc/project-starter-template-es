@@ -70,6 +70,18 @@ jobs:
         if: ${{ !cancelled() }}
         run: bash .github/scripts/check-inheritance.sh
 
+      # La regla «las ramas nacen de develop» es incomprobable si develop no
+      # está publicada, y el fallo solo aparece al abrir el PR.
+      - name: "develop existe en el remoto"
+        if: ${{ !cancelled() }}
+        run: bash .github/scripts/check-git-flow.sh
+
+      # Un workflow copiado se trae su `if: github.repository ==`: entonces no
+      # falla, se salta — y un «skipping» gris se lee casi igual que un verde.
+      - name: Identidad de los workflows
+        if: ${{ !cancelled() }}
+        run: bash .github/scripts/check-workflow-identity.sh
+
       - name: Design system — vistas sin color crudo
         if: ${{ !cancelled() }}
         run: bash .github/scripts/check-design-tokens.sh

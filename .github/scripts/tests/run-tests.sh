@@ -11,6 +11,8 @@ CHECK_PLACEHOLDERS="$REPO_ROOT/.github/scripts/check-placeholders.sh"
 CHECK_LINKS="$REPO_ROOT/.github/scripts/check-links.sh"
 CHECK_CHANGELOG="$REPO_ROOT/.github/scripts/check-changelog.sh"
 CHECK_RELEASE="$REPO_ROOT/.github/scripts/check-release.sh"
+CHECK_GIT_FLOW="$REPO_ROOT/.github/scripts/check-git-flow.sh"
+CHECK_WF_IDENTITY="$REPO_ROOT/.github/scripts/check-workflow-identity.sh"
 CHECK_INSTRUCCIONES="$REPO_ROOT/.github/scripts/check-instructions.sh"
 CHECK_HOOKS="$REPO_ROOT/.github/scripts/check-hooks-enabled.sh"
 
@@ -1068,6 +1070,106 @@ if [ -d "$WORKFLOWS" ]; then
   [ -z "$ejemplos_ejecutables" ]
   check "ningún workflow de ejemplo termina en .yml/.yaml" 0 $?
   [ -n "$ejemplos_ejecutables" ] && printf '     · %s\n' $ejemplos_ejecutables
+fi
+
+# ── check-git-flow.sh ─────────────────────────────────────────────────────────
+# La regla «las ramas de trabajo nacen de develop» es incomprobable si develop
+# no está publicada. El fallo aparece tarde —al abrir el PR— y su arreglo
+# aparente (abrirlo contra main) es lo que la convención prohíbe.
+if [ -f "$CHECK_GIT_FLOW" ]; then
+  echo "check-git-flow.sh:"
+
+  # Repo con remoto de verdad: un bare local hace de 'origin'.
+  crea_repo_con_remoto() {
+    mkdir -p "$TMP/$1"
+    git init -q --bare "$TMP/$1-remoto.git"
+    git init -q "$TMP/$1"
+    git -C "$TMP/$1" remote add origin "$TMP/$1-remoto.git"
+    printf 'Las ramas de trabajo nacen de develop.\n' >"$TMP/$1/CONTRIBUTING.md"
+    git -C "$TMP/$1" add -A >/dev/null
+    git -C "$TMP/$1" -c user.email=t@t -c user.name=t commit -qm x
+    git -C "$TMP/$1" push -q origin HEAD:refs/heads/main
+  }
+
+  crea_repo_con_remoto gf-sin
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-sin" >/dev/null 2>&1)
+  check "remoto sin develop → falla" 1 $?
+
+  git -C "$TMP/gf-sin" push -q origin HEAD:refs/heads/develop
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-sin" >/dev/null 2>&1)
+  check "remoto con develop → pasa" 0 $?
+
+  # Una develop solo local no vale: el PR se abre contra el remoto.
+  crea_repo_con_remoto gf-local
+  git -C "$TMP/gf-local" branch develop >/dev/null 2>&1
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-local" >/dev/null 2>&1)
+  check "develop solo en local → falla" 1 $?
+
+  # Proyecto que reescribió CONTRIBUTING para trabajar solo sobre main.
+  crea_repo_con_remoto gf-trunk
+  printf 'Todo sale de main.\n' >"$TMP/gf-trunk/CONTRIBUTING.md"
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-trunk" >/dev/null 2>&1)
+  check "CONTRIBUTING sin 'develop' → no opina" 0 $?
+
+  # Sin remoto no hay nada que comprobar: falla abierto.
+  mkdir -p "$TMP/gf-sin-remoto"
+  git init -q "$TMP/gf-sin-remoto"
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-sin-remoto" >/dev/null 2>&1)
+  check "repo sin remoto → no opina" 0 $?
+
+  mkdir -p "$TMP/gf-no-git"
+  (bash "$CHECK_GIT_FLOW" "$TMP/gf-no-git" >/dev/null 2>&1)
+  check "carpeta sin git → no opina" 0 $?
+fi
+
+# ── check-workflow-identity.sh ────────────────────────────────────────────────
+# Un workflow copiado entre repositorios se trae su `if: github.repository ==`.
+# No falla: se salta. Y un «skipping» gris se lee casi igual que un verde.
+if [ -f "$CHECK_WF_IDENTITY" ]; then
+  echo "check-workflow-identity.sh:"
+
+  crea_wf() {  # $1 = nombre, $2 = slug nombrado en la condición
+    mkdir -p "$TMP/$1/.github/workflows"
+    : >"$TMP/$1/TEMPLATE-USAGE.md"
+    printf "jobs:\n  x:\n    if: github.repository == '%s'\n" "$2" \
+      >"$TMP/$1/.github/workflows/a.yml"
+  }
+
+  crea_wf wf-ajeno otro/repo
+  (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-ajeno" >/dev/null 2>&1)
+  check "condición que nombra a otro repositorio → falla" 1 $?
+
+  crea_wf wf-propio yo/mio
+  (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-propio" >/dev/null 2>&1)
+  check "condición que nombra a este repositorio → pasa" 0 $?
+
+  # Comillas dobles: el YAML admite las dos y la regla no cambia.
+  mkdir -p "$TMP/wf-dobles/.github/workflows"
+  : >"$TMP/wf-dobles/TEMPLATE-USAGE.md"
+  printf 'jobs:\n  x:\n    if: github.repository == "otro/repo"\n' \
+    >"$TMP/wf-dobles/.github/workflows/a.yml"
+  (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-dobles" >/dev/null 2>&1)
+  check "condición entre comillas dobles → también se detecta" 1 $?
+
+  # En un proyecto instanciado la condición nombra a la plantilla A PROPÓSITO:
+  # es lo que impide que el workflow corra ahí. Sin TEMPLATE-USAGE.md, no opina.
+  crea_wf wf-instancia otro/repo
+  rm -f "$TMP/wf-instancia/TEMPLATE-USAGE.md"
+  (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-instancia" >/dev/null 2>&1)
+  check "proyecto instanciado (sin TEMPLATE-USAGE.md) → no opina" 0 $?
+
+  # Sin saber qué repositorio es este, no hay con qué comparar.
+  crea_wf wf-sin-slug otro/repo
+  (cd "$TMP/wf-sin-slug" && GITHUB_REPOSITORY= bash "$CHECK_WF_IDENTITY" . >/dev/null 2>&1)
+  check "sin remoto ni GITHUB_REPOSITORY → no opina" 0 $?
+
+  # Un .yml.example no se ejecuta, pero se copia igual: también se revisa.
+  mkdir -p "$TMP/wf-ejemplo/.github/workflows"
+  : >"$TMP/wf-ejemplo/TEMPLATE-USAGE.md"
+  printf "jobs:\n  x:\n    if: github.repository == 'otro/repo'\n" \
+    >"$TMP/wf-ejemplo/.github/workflows/ci.yml.example"
+  (GITHUB_REPOSITORY=yo/mio bash "$CHECK_WF_IDENTITY" "$TMP/wf-ejemplo" >/dev/null 2>&1)
+  check "condición en un .yml.example → también se revisa" 1 $?
 fi
 
 # ── Resumen ───────────────────────────────────────────────────────────────────
