@@ -6,9 +6,8 @@
 #
 # Para activarlo:
 #   1. Renombra este archivo a `ci.yml`.
-#   2. Reemplaza los pasos [COMANDO_*] por los de tu proyecto (están en AGENTS.md →
-#      "Configuración y comandos", y la skill `/instanciar` los toma del preset de
-#      docs/architecture/stack.md en su Paso 6).
+#   2. Reemplaza los pasos [COMANDO_*] por los de tu proyecto (están en el bloque
+#      «Uso» del README y en docs/architecture/stack.md).
 #   3. Borra esta cabecera.
 #
 # OJO con el nombre: GitHub ejecuta CUALQUIER archivo `.yml`/`.yaml` dentro de

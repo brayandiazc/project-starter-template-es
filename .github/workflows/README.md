@@ -21,16 +21,16 @@ Funcionan tal cual, sin importar el lenguaje del proyecto — no los borres al i
   desaparecer en silencio la release propia.
 - [`template-update-check.yml`](template-update-check.yml) — **solo actúa en proyectos
   instanciados** (necesita `.template-origin`). Semanalmente compara el tooling con el
-  de la plantilla de origen y abre un issue si hay mejoras. Para aplicarlas:
-  `/actualizar-plantilla`.
+  de la plantilla de origen y abre un issue si hay mejoras. Para aplicarlas, el
+  apartado «Actualizar» de `TEMPLATE-USAGE.md`.
 
 ## Esqueleto incluido
 
 - [`ci.yml.example`](ci.yml.example) — pipeline neutro (lint → test → build). La
   extensión `.example` va **al final a propósito**: GitHub ejecuta cualquier archivo
   `.yml`/`.yaml` que viva en esta carpeta, sin importar qué más lleve en el nombre.
-  `/instanciar` lo renombra a `ci.yml` y sustituye los `[COMANDO_*]` por los del stack
-  elegido. Hasta entonces, el repositorio no ejecuta pruebas de código — solo las
+  Al instanciar, renómbralo a `ci.yml` y sustituye los `[COMANDO_*]` por los de tu
+  stack. Hasta entonces, el repositorio no ejecuta pruebas de código — solo las
   comprobaciones de documentación.
 
 ## Dos reglas de esta carpeta

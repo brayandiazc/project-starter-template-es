@@ -11,6 +11,18 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.0.1] - 2026-09-07
+
+### Fixed
+
+- **El workflow de paridad no se ejecutaba nunca en esta variante.** Su condición `if`
+  y el repositorio hermano seguían nombrando a las variantes con IA, así que el job
+  aparecía como «skipping» en cada PR. Un check que no corre es peor que uno que falla:
+  el segundo avisa. Ahora compara contra `project-starter-template-en`.
+- **Los workflows apuntaban a skills que aquí no existen** (`/instanciar`,
+  `/actualizar-plantilla`) y a `AGENTS.md`, que es de las variantes con IA. Ahora
+  remiten a `TEMPLATE-USAGE.md` y al bloque «Uso» del README, que es lo que hay.
+
 ## [2.0.0] - 2026-09-07
 
 ### Added
@@ -83,6 +95,7 @@ del repositorio. No se reconstruye aquí: inventarlo sería peor que no tenerlo.
 
 <!--
 Enlaces de comparación entre versiones:
-[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.1...HEAD
+[2.0.1]: https://github.com/brayandiazc/project-starter-template-es/compare/v2.0.0...v2.0.1
 [2.0.0]: https://github.com/brayandiazc/project-starter-template-es/compare/v1.4.0...v2.0.0
 -->
