@@ -2,6 +2,11 @@
 
 Esta guía explica cómo convertir esta plantilla en la documentación real de tu proyecto. Una vez instanciada, **puedes borrar este archivo** (`TEMPLATE-USAGE.md`).
 
+> **Estado de mantenimiento.** Esta plantilla ya no recibe mejoras de forma activa. Se
+> conserva publicada y funcional —y es perfectamente utilizable— pero las correcciones
+> llegan cuando alguien las trae, no en una cadencia. Tenlo en cuenta antes de apoyar en
+> ella algo que necesite mantenimiento continuo.
+
 ## 1. Qué es y qué no es
 
 - **Es** una base de documentación lista para iniciar cualquier proyecto: estructura de carpetas, archivos de gobernanza y esqueletos de documentos con placeholders.
