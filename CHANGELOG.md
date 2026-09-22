@@ -11,6 +11,8 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-09-22
+
 ### Fixed
 
 - **`check-design-tokens.sh` no miraba `design/`, que es el único sitio de la plantilla
