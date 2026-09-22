@@ -11,6 +11,29 @@ plantilla, no su vida (ver `TEMPLATE-USAGE.md`).
 
 ## [Unreleased]
 
+## [2.3.1] - 2026-09-22
+
+### Fixed
+
+- **`check-design-tokens.sh` no miraba `design/`, que es el único sitio de la plantilla
+  con vistas.** `design/` no estaba en `DIRS` y la raíz solo se recorre a un nivel, así
+  que en este repositorio el check salía **en verde diciendo "no encontré vistas ni
+  estilos que revisar"** sin abrir un archivo. El muestrario que enseña la regla era el
+  único que no tenía que cumplirla. Al encenderlo aparecieron dos defectos más del
+  propio check, ambos corregidos:
+  - **Los comentarios `//` dentro de un `<script>` no se limpiaban** en archivos de
+    marcado, solo en `.js`/`.css`. Documentar la regla la infringía.
+  - **Una función propia llamada `rgb()` se contaba como color.** Un color CSS siempre
+    abre con un número, un signo o `from`; `rgb(color)` abre con un identificador.
+
+  Cinco pruebas nuevas cubren los tres casos y el par que no debe cambiar.
+
+### Changed
+
+- **`TEMPLATE-USAGE.md` declara el estado de mantenimiento de la plantilla.** Un
+  repositorio con commits recientes se lee como activo aunque no lo esté, y eso es una
+  promesa que nadie hizo.
+
 ## [2.3.0] - 2026-09-07
 
 ### Added

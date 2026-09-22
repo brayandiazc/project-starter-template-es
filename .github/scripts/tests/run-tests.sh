@@ -667,6 +667,31 @@ if [ -f "$CHECK_DESIGN" ]; then
   printf ':root { --color-primary: #0a7a9d; }\n' >"$TMP/dz-tokens/src/tokens.css"
   run_design dz-tokens; check "tokens.css define los colores → exento" 0 $?
 
+  # ── design/ se revisa como cualquier otra carpeta de vistas ────────────────
+  design_repo dz-design design/preview.html
+  printf '<div style="color:#ff0000">x</div>\n' >"$TMP/dz-design/design/preview.html"
+  run_design dz-design; check "hex en design/preview.html → falla" 1 $?
+
+  mkdir -p "$TMP/dz-design-tokens/design"
+  printf ':root { --color-primary: oklch(0.55 0.1 200); }\n' \
+    >"$TMP/dz-design-tokens/design/tokens.css"
+  run_design dz-design-tokens; check "design/tokens.css → sigue exento" 0 $?
+
+  design_repo dz-script design/v.html
+  printf '<script>\n// convertimos oklch() a rgb() leyendo el pixel\nconst a = 1;\n</script>\n' \
+    >"$TMP/dz-script/design/v.html"
+  run_design dz-script; check "comentario // dentro de <script> → no cuenta" 0 $?
+
+  design_repo dz-fn design/v.html
+  printf '<script>\nfunction rgb(color) { return color; }\nconst x = rgb(color);\n</script>\n' \
+    >"$TMP/dz-fn/design/v.html"
+  run_design dz-fn; check "función propia rgb(color) → no es un color" 0 $?
+
+  design_repo dz-fn-real design/v.html
+  printf '<script>\nel.style.color = "rgb(255, 0, 0)";\n</script>\n' \
+    >"$TMP/dz-fn-real/design/v.html"
+  run_design dz-fn-real; check "rgb(255, 0, 0) en <script> → falla igual" 1 $?
+
   # Documentar la regla no puede infringir la regla: los comentarios no llegan al
   # navegador. Este fue un falso positivo real — la cabecera de una hoja de estilos
   # que deletreaba los patrones prohibidos salía como hallazgo.
