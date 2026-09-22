@@ -23,7 +23,14 @@ cd "$ROOT"
 
 # Carpetas de vistas habituales, cubriendo las convenciones más comunes:
 # app/views y app/components, templates, src, components, pages, layouts.
-DIRS="app/views app/components templates src components pages layouts"
+#
+# Y `design/`, que era el agujero más incómodo: la plantilla envía ahí su propio
+# muestrario (`preview.html`) y el check NO lo miraba — `design/` no estaba en la lista
+# y la raíz solo se recorre a un nivel. En el repositorio de la plantilla, el único
+# sitio con vistas, el check salía en verde diciendo "no encontré vistas ni estilos que
+# revisar" sin abrir un archivo. El ejemplo que enseña la regla es justo el que tiene
+# que cumplirla.
+DIRS="app/views app/components templates src components pages layouts design"
 # `css`, `js` y `ts` no estaban, y ese era el agujero grande: **el CSS es donde viven
 # los colores crudos en CUALQUIER stack**. Un proyecto con
 # app/assets/stylesheets/*.css tampoco se revisaba, y uno sin framework —vistas como
@@ -105,6 +112,17 @@ def sin_comentarios(texto, ruta):
         patrones.append(r"(?<!:)//[^\n]*")
     for p in patrones:
         texto = re.sub(p, blanquear, texto, flags=re.S)
+    # Un archivo de marcado lleva JavaScript dentro de <script>, y ahí los comentarios
+    # son `//`. Sin esto, la cabecera que EXPLICA la regla («convertimos oklch() a
+    # RGB») se contaba como infracción: el mismo fallo que la exclusión de arriba
+    # existe para evitar, un tipo de archivo más allá.
+    if ext in ("html", "erb", "j2", "jinja", "vue", "astro"):
+        texto = re.sub(
+            r"<script\b[^>]*>.*?</script>",
+            lambda m: re.sub(r"(?<!:)//[^\n]*", blanquear, m.group(0)),
+            texto,
+            flags=re.S | re.I,
+        )
     return texto
 
 # Excepción: logos de terceros. Un logo de marca lleva SUS colores —Google, GitHub,
@@ -132,7 +150,11 @@ patrones = [
     (rf"--(?:{paleta})-\d{{2,3}}\b", "variable de paleta cruda"),
     (r"(?:bg|text|border|fill|stroke)-\[[^\]]+\]", "valor arbitrario"),
     (r"#[0-9a-fA-F]{3}(?![0-9a-zA-Z_-])|#[0-9a-fA-F]{6}(?![0-9a-zA-Z_-])", "color hex"),
-    (r"\b(?:rgba?|hsla?|oklch)\(", "color inline"),
+    # Un color CSS siempre abre con un número, un signo o `from` (colores
+    # relativos): `rgb(255 0 0)`, `oklch(.7 .1 200)`, `rgb(from var(--x) r g b)`.
+    # Una función PROPIA llamada `rgb(color)` abre con un identificador, y se
+    # contaba como infracción — pasa en cuanto una vista calcula contraste.
+    (r"\b(?:rgba?|hsla?|oklch)\(\s*(?:from\b|[-+.\d])", "color inline"),
 ]
 
 for n, linea in enumerate(sin_comentarios(sin_marcas(src), ruta).split("\n"), 1):
